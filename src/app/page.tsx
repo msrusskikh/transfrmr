@@ -129,14 +129,116 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* Pricing Section */}
+        <div className="container mx-auto px-6 py-20">
+          <div className="max-w-lg mx-auto">
+            <div className="bg-card/50 rounded-xl p-8 border border-border/30 shadow-sm">
+              <div className="text-center space-y-8">
+                {/* Header */}
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                    Стоимость курса
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    Полный доступ ко всем материалам
+                  </p>
+                </div>
+
+                {/* Pricing Display */}
+                <div className="space-y-5">
+                  <div className="flex items-baseline justify-center gap-4">
+                    <span className="text-5xl font-bold tracking-tight text-foreground">3 290 ₽</span>
+                    <span className="text-lg text-muted-foreground line-through">11 000 ₽</span>
+                  </div>
+                  
+                  {/* Discount Badge */}
+                  <div className="inline-flex items-center px-3 py-1 rounded-md bg-muted/30 border border-border/40">
+                    <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Экономия 70%</span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-border/50"></div>
+
+                {/* Features List */}
+                <div className="space-y-3 text-left">
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-foreground">50+ интерактивных уроков</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-foreground">Практические задания и кейсы</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-foreground">Пожизненный доступ к материалам</p>
+                  </div>
+                </div>
+
+                {/* Purchase Button */}
+                <div className="pt-2">
+                  <Button 
+                    size="lg" 
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white hover:scale-105 transition-transform duration-200 shadow-sm px-8 text-base font-medium"
+                    onClick={() => {
+                      // TODO: Add purchase logic here
+                      alert('Функция покупки будет добавлена позже')
+                    }}
+                  >
+                    Купить курс
+                  </Button>
+                  <p className="text-xs text-muted-foreground/70 mt-3">
+                    Безопасная оплата • Мгновенный доступ
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
 
       {/* Footer with OpenAI Brand Reference - Now at the very bottom */}
       <footer className="mt-auto py-8 border-t border-border/30">
         <div className="container mx-auto px-6">
-          <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground/60 font-mono tracking-wide">
-            <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
-            <span>Powered by OpenAI</span>
+          <div className="flex flex-col space-y-6">
+            {/* Main Footer Content - Left and Right */}
+            <div className="flex items-start justify-between">
+              {/* Contact Information - Left */}
+              <div className="text-left space-y-1">
+                <p className="text-sm text-foreground">Русских М.С.</p>
+                <p className="text-sm text-muted-foreground">ИНН 770475475401</p>
+                <a 
+                  href="mailto:hi@transfrmr.ai" 
+                  className="text-sm text-primary hover:text-primary/80 transition-colors"
+                >
+                  hi@transfrmr.ai
+                </a>
+              </div>
+
+              {/* Legal Links - Right */}
+              <div className="text-right space-y-1">
+                <Link 
+                  href="/oferta" 
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                >
+                  Оферта
+                </Link>
+                <Link 
+                  href="/privacy-policy" 
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block"
+                >
+                  Политика конфиденциальности
+                </Link>
+              </div>
+            </div>
+
+            {/* OpenAI Brand Reference */}
+            <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground/60 font-mono tracking-wide">
+              <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
+              <span>Powered by OpenAI</span>
+            </div>
           </div>
         </div>
       </footer>
