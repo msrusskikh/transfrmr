@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { CheckCircle2, Mail } from 'lucide-react'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -26,11 +27,23 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
+
+  // Defer client creation to client-side only
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !supabaseRef.current) {
+      supabaseRef.current = createClient()
+    }
+  }, [])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (!supabaseRef.current) {
+      setError('Supabase client не инициализирован. Пожалуйста, обновите страницу.')
+      return
+    }
 
     if (password !== confirmPassword) {
       setError('Пароли не совпадают')
@@ -45,7 +58,7 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabaseRef.current.auth.signUp({
         email,
         password,
       })
