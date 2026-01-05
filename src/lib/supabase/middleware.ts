@@ -2,13 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
-  // #region agent log
-  if (typeof process !== 'undefined' && process.env) {
-    const logData = {location:'supabase/middleware.ts:5',message:'updateSession called',data:{pathname:request.nextUrl.pathname,hasUrl:!!process.env.NEXT_PUBLIC_SUPABASE_URL,hasKey:!!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY},timestamp:Date.now(),sessionId:'debug-session',runId:'build-test',hypothesisId:'C'};
-    try { await fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(logData)}); } catch {}
-  }
-  // #endregion
-  
   let supabaseResponse = NextResponse.next({
     request,
   })
