@@ -21,6 +21,7 @@ An ultra-minimal, production-ready interactive education web app built with Next
 - **shadcn/ui** components
 - **Radix UI** primitives
 - **Zustand** for state management
+- **Supabase** for authentication
 - **Lucide React** for icons
 
 ## 📁 Project Structure
@@ -144,7 +145,30 @@ Your lesson content here...
 ## 🔧 Configuration
 
 ### Environment Variables
-Create a `.env.local` file for any environment-specific configuration.
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Supabase Configuration
+# Get these values from your Supabase project settings: https://app.supabase.com/project/_/settings/api
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# OpenAI API (if using AI features)
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### Supabase Setup
+
+1. Create a new project at [Supabase](https://app.supabase.com)
+2. Go to Project Settings → API
+3. Copy your Project URL and anon/public key
+4. Add them to your `.env.local` file
+5. Enable Email authentication in Authentication → Providers → Email
+
+The authentication system will:
+- Protect `/learn` routes (requires login)
+- Allow public access to home page, login, and signup pages
+- Provide user session management across the app
 
 ### Styling
 The app uses Tailwind CSS with custom CSS variables for theming. Colors and spacing can be customized in `src/app/globals.css`.
