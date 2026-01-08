@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,12 +33,23 @@ export default function SignupPage() {
   useEffect(() => {
     if (typeof window !== 'undefined' && !supabaseRef.current) {
       supabaseRef.current = createClient()
+      
+      // Check if Supabase is not configured
+      if (!isSupabaseConfigured()) {
+        setError('Supabase не настроен. Пожалуйста, настройте переменные окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
+      }
     }
   }, [])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    // Check if Supabase is configured before attempting signup
+    if (!isSupabaseConfigured()) {
+      setError('Supabase не настроен. Пожалуйста, настройте переменные окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
+      return
+    }
 
     if (!supabaseRef.current) {
       setError('Supabase client не инициализирован. Пожалуйста, обновите страницу.')
@@ -65,8 +76,13 @@ export default function SignupPage() {
 
       if (error) {
         // Provide more helpful error messages
-        if (error.message.includes('Invalid API key') || error.message.includes('JWT')) {
-          setError('Неверный API ключ. Проверьте настройки Supabase в .env.local файле.')
+        if (error.message.includes('Invalid API key') || 
+            error.message.includes('JWT') || 
+            error.message.includes('Failed to fetch') || 
+            error.message.includes('Load failed') ||
+            error.message.includes('NetworkError') ||
+            error.message.includes('fetch')) {
+          setError('Supabase не настроен или недоступен. Проверьте настройки переменных окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
         } else if (error.message.includes('email')) {
           setError('Этот email уже зарегистрирован или неверный формат.')
         } else {
@@ -78,8 +94,15 @@ export default function SignupPage() {
       // Show success dialog with email confirmation instructions
       setShowSuccessDialog(true)
     } catch (error: any) {
-      if (error.message?.includes('Missing Supabase')) {
-        setError('Настройки Supabase не найдены. Проверьте файл .env.local')
+      // Handle network errors or placeholder client errors
+      if (error.message?.includes('Missing Supabase') || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Load failed') ||
+          error.message?.includes('NetworkError') ||
+          error.message?.includes('fetch') ||
+          error.name === 'TypeError' ||
+          (error.message && typeof error.message === 'string' && error.message.toLowerCase().includes('load'))) {
+        setError('Supabase не настроен или недоступен. Проверьте настройки переменных окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
       } else {
         setError(error.message || 'Произошла ошибка при регистрации')
       }
