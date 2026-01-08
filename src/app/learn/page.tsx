@@ -54,24 +54,33 @@ export default function LearnPage() {
         <div className="max-w-4xl mx-auto space-y-8">
         {/* Banner for new learners */}
         {isNewLearner && firstLesson && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Play className="h-5 w-5" />
-                <span>Начать обучение</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-xl font-semibold">{firstLesson.title}</h3>
-                <p className="text-muted-foreground">{firstLesson.summary}</p>
+          <Card className="bg-card/100 backdrop-blur-sm border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Link href={`/learn/1/1`} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer" style={{ backgroundColor: '#8658EA' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6B4CE6'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#8658EA'}>
+                    <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
+                  </Link>
+                  <div>
+                    <div className="font-medium text-foreground">Начать обучение</div>
+                    <div className="text-sm text-muted-foreground">{firstLesson.title}</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <div className="text-center">
+                    <div className="font-medium text-foreground">Модуль 1</div>
+                    <div>Урок 1</div>
+                  </div>
+                  <div className="w-px h-8 bg-border"></div>
+                  <Button asChild size="sm" style={{ backgroundColor: '#FFB404', color: '#000000' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E6F570'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FFB404'}>
+                    <Link href={`/learn/1/1`}>
+                      Продолжить
+                      <ArrowRight className="ml-1 h-3 w-3" />
+                      
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              <Button asChild>
-                <Link href={`/learn/1/1`}>
-                  Начать урок
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
             </CardContent>
           </Card>
         )}

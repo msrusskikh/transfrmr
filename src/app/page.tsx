@@ -6,14 +6,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/ca
 import { useProgressStore } from "@/lib/progress"
 import { modules } from "@/lib/content"
 import { useEffect } from "react"
+import { useAuth } from "@/contexts/AuthContext"
+import { useRouter } from "next/navigation"
+import { User, LogOut, LogIn } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function HomePage() {
   const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
+  const { user, signOut, loading: authLoading } = useAuth()
+  const router = useRouter()
+  
   // Force dark theme on mount
   useEffect(() => {
     document.documentElement.classList.add('dark')
     localStorage.setItem('theme', 'dark')
   }, [])
+  
+  const handleSignOut = async () => {
+    // Navigate immediately for instant feedback
+    router.push('/')
+    // Sign out in the background - don't block navigation
+    signOut().catch((error) => {
+      console.error('Error signing out:', error)
+    })
+  }
   
   // Function to get current lesson title
   const getCurrentLessonTitle = () => {
@@ -71,7 +92,36 @@ export default function HomePage() {
           <div className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold text-foreground">Трансформер</h1>
           </div>
-          
+          {/* Authentication UI */}
+          {!authLoading && (
+            <>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="hidden md:inline text-xs text-foreground truncate max-w-[120px]">
+                        {user.email}
+                      </span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      <span>Выйти</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/login">
+                    <LogIn className="h-4 w-4 mr-2" />
+                    <span className="text-xs">Войти</span>
+                  </Link>
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </header>
 

@@ -7,6 +7,12 @@ import { useCommandMenu } from "@/lib/command-menu"
 import { useProgressStore } from "@/lib/progress"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface TopBarProps {
   onMobileMenuToggle?: () => void
@@ -28,9 +34,12 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
   }
 
   const handleSignOut = async () => {
-    await signOut()
+    // Navigate immediately for instant feedback
     router.push('/')
-    router.refresh()
+    // Sign out in the background - don't block navigation
+    signOut().catch((error) => {
+      console.error('Error signing out:', error)
+    })
   }
 
   return (
@@ -87,24 +96,22 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
           {!authLoading && (
             <>
               {user ? (
-                <>
-                  <div className="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-md bg-muted/30">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-foreground truncate max-w-[120px]">
-                      {user.email}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="h-9 px-3 hover:bg-accent/50 transition-all duration-200"
-                    title="Выйти"
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    <span className="hidden md:inline text-xs">Выйти</span>
-                  </Button>
-                </>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="hidden md:inline text-xs text-foreground truncate max-w-[120px]">
+                        {user.email}
+                      </span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      <span>Выйти</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <Link href="/login">
                   <Button
