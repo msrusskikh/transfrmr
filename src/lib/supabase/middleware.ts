@@ -2,6 +2,11 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  // #region agent log
+  const logData = {location:'supabase/middleware.ts:5',message:'updateSession called',data:{pathname:request.nextUrl.pathname,hasUrl:!!process.env.NEXT_PUBLIC_SUPABASE_URL,hasKey:!!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'};
+  try { await fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(logData)}); } catch {}
+  // #endregion
+  
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -13,6 +18,10 @@ export async function updateSession(request: NextRequest) {
   // If environment variables are missing, skip auth check and allow request to continue
   // This prevents crashes when Supabase is not configured
   if (!supabaseUrl || !supabaseAnonKey) {
+    // #region agent log
+    const logData2 = {location:'supabase/middleware.ts:16',message:'Env vars missing - skipping auth',data:{pathname:request.nextUrl.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'};
+    try { await fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(logData2)}); } catch {}
+    // #endregion
     console.warn('[Supabase Middleware] Environment variables missing. Skipping auth check.')
     return supabaseResponse
   }
