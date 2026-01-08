@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronDown, ChevronRight, CheckCircle, Circle, Lock, Palette } from "lucide-react"
+import { ChevronDown, ChevronRight, CheckCircle, Circle, Lock } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { useProgressStore } from "@/lib/progress"
