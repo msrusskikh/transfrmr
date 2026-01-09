@@ -73,12 +73,9 @@ export default function ModulePage({ params }: ModulePageProps) {
             )}
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold text-primary">
-                {completedCount}/{module.sections.length} уроков завершено
-              </div>
+            <div className="flex items-center justify-end">
               <div className="text-sm text-muted-foreground">
-                ~{module.sections.reduce((acc, s) => acc + s.duration, 0)} мин
+                {module.sections.length} уроков • ~{module.sections.reduce((acc, s) => acc + s.duration, 0)} мин
               </div>
             </div>
             

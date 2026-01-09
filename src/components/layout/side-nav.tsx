@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronDown, ChevronRight, CheckCircle, Circle, Lock } from "lucide-react"
+import { ChevronDown, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { useProgressStore } from "@/lib/progress"
@@ -26,14 +26,6 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
   ).length
   
   const progress = (completedCount / module.sections.length) * 100
-  
-  // Check if module has any locked sections (when not in dev mode)
-  const hasLockedSections = !isDevMode && module.sections.some(section => {
-    const isFirstSection = section.section === 1
-    const hasAccessToPrevious = section.section > 1 && completedSections.has(`${module.id}-${section.section - 1}`)
-    const isCompleted = completedSections.has(`${module.id}-${section.section}`)
-    return !(isFirstSection || isCompleted || hasAccessToPrevious)
-  })
 
   return (
     <div className="space-y-1">
@@ -42,7 +34,7 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
         size="sm"
         className={cn(
           "w-full justify-between p-3 h-auto transition-all duration-200",
-          hasLockedSections ? "opacity-75 hover:bg-muted/30" : "hover:bg-accent/50"
+          "hover:bg-accent/50"
         )}
         onClick={onToggle}
       >
@@ -54,9 +46,6 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
           )}
           <div className="flex items-center space-x-2">
             <span className="font-medium break-words leading-tight mt-0.5 text-foreground">{module.title}</span>
-            {hasLockedSections && (
-              <Lock className="h-3 w-3 text-muted-foreground/60" />
-            )}
           </div>
         </div>
       </Button>
@@ -97,16 +86,14 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
                   isActive && "bg-accent text-foreground"
                 )}
               >
-                {isCompleted ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-1 flex-shrink-0" style={{ color: '#0d9488' }}>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="m9 12 2 2 4-4" stroke="currentColor" strokeWidth="2" fill="none"/>
-                  </svg>
-                ) : hasAccess ? (
-                  <Circle className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
-                ) : (
-                  <Lock className="h-4 w-4 text-muted-foreground/50 mt-1 flex-shrink-0" />
-                )}
+                <div className={cn(
+                  "w-2 h-2 rounded-full mt-1.5 flex-shrink-0 transition-colors",
+                  isCompleted 
+                    ? "bg-foreground border-foreground border" 
+                    : hasAccess 
+                      ? "bg-background border border-muted-foreground/60 group-hover:border-foreground/60" 
+                      : "bg-background border border-muted-foreground/30"
+                )}></div>
                 <span className="relative overflow-hidden max-w-[180px] -mt-0.5">
                   <span className={cn(
                     "text-xs font-medium leading-tight",

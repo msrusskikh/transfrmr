@@ -8,10 +8,13 @@ import { modules } from "@/lib/content"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { ArrowRight, Play } from "lucide-react"
+import { ArrowRight, Play, ChevronDown, ChevronUp, Circle } from "lucide-react"
+import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 export default function LearnPage() {
-  const { currentModule, currentSection, completedSections } = useProgressStore()
+  const { currentModule, currentSection, completedSections, isDevMode } = useProgressStore()
+  const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set())
   
   const currentModuleData = modules.find(m => m.id === currentModule)
   const currentSectionData = currentModuleData?.sections.find(s => s.section === currentSection)
@@ -48,6 +51,18 @@ export default function LearnPage() {
     return (completed / module.sections.length) * 100
   }
 
+  const toggleModule = (moduleId: number) => {
+    setExpandedModules(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(moduleId)) {
+        newSet.delete(moduleId)
+      } else {
+        newSet.add(moduleId)
+      }
+      return newSet
+    })
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
@@ -72,7 +87,7 @@ export default function LearnPage() {
                     <div>Урок 1</div>
                   </div>
                   <div className="w-px h-8 bg-border"></div>
-                  <Button asChild size="sm" style={{ backgroundColor: '#FFB404', color: '#000000' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E6F570'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FFB404'}>
+                  <Button asChild variant="outline" size="sm" className="h-9 px-3 transition-all duration-200 hover:bg-accent/50">
                     <Link href={`/learn/1/1`}>
                       Продолжить
                       <ArrowRight className="ml-1 h-3 w-3" />
@@ -105,7 +120,7 @@ export default function LearnPage() {
                     <div>Урок {nextLesson.section.section}</div>
                   </div>
                   <div className="w-px h-8 bg-border"></div>
-                  <Button asChild size="sm" style={{ backgroundColor: '#FFB404', color: '#000000' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E6F570'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FFB404'}>
+                  <Button asChild variant="outline" size="sm" className="h-9 px-3 transition-all duration-200 hover:bg-accent/50">
                     <Link href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`}>
                       Продолжить
                       <ArrowRight className="ml-1 h-3 w-3" />
@@ -125,25 +140,24 @@ export default function LearnPage() {
           <div className="grid gap-6">
             {modules.map((module) => {
               const progress = getModuleProgress(module.id)
-              const completedCount = module.sections.filter(section => 
-                completedSections.has(`${module.id}-${section.section}`)
-              ).length
+              const isExpanded = expandedModules.has(module.id)
               
               return (
-                <Card key={module.id}>
+                <Card key={module.id} className="cursor-pointer" onClick={() => toggleModule(module.id)}>
                   <CardHeader>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-start">
                       <div className="flex-1 min-w-0 text-left">
-                        <Link href={`/learn/${module.id}`} className="hover:opacity-80 transition-opacity">
-                          <CardTitle className="text-xl cursor-pointer text-left">{module.title}</CardTitle>
-                        </Link>
+                        <CardTitle className="text-xl text-left">{module.title}</CardTitle>
                         <p className="text-muted-foreground mt-1 text-left">{module.description}</p>
                       </div>
-                      <div className="text-right flex-shrink-0 ml-4 self-start">
-                         <div className="text-2xl font-bold" style={{ color: completedCount === module.sections.length ? '#FFFFFF' : '#FFB404' }}>
-                          {completedCount}/{module.sections.length}
+                      <div className="flex-shrink-0 ml-4">
+                        <div className="w-8 h-8 rounded-md border border-border/50 bg-background/50 flex items-center justify-center hover:bg-accent/50 transition-colors">
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4 text-foreground" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4 text-foreground" />
+                          )}
                         </div>
-                        <div className="text-sm text-muted-foreground">уроков</div>
                       </div>
                     </div>
                   </CardHeader>
@@ -160,13 +174,54 @@ export default function LearnPage() {
                       <div className="text-sm text-muted-foreground">
                         {module.sections.length} уроков • ~{module.sections.reduce((acc, s) => acc + s.duration, 0)} мин
                       </div>
-                      <Button asChild variant="outline">
-                        <Link href={`/learn/${module.id}`}>
-                          Посмотреть уроки
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
                     </div>
+
+                    {/* Lessons Dropdown */}
+                    {isExpanded && (
+                      <div className="pt-4 border-t border-border/50">
+                        <div className="relative pl-6">
+                          <div className="space-y-1">
+                            {module.sections.map((section) => {
+                              const isCompleted = completedSections.has(`${module.id}-${section.section}`)
+                              const isFirstSection = section.section === 1
+                              const hasAccessToPrevious = section.section > 1 && completedSections.has(`${module.id}-${section.section - 1}`)
+                              const hasAccess = isDevMode || isFirstSection || isCompleted || hasAccessToPrevious
+                              
+                              return (
+                                <Link
+                                  key={section.section}
+                                  href={`/learn/${module.id}/${section.section}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className={cn(
+                                    "relative flex items-center pl-4 py-2 transition-all duration-200 group",
+                                    !hasAccess && !isDevMode && "opacity-50 pointer-events-none",
+                                    hasAccess && "hover:text-foreground"
+                                  )}
+                                >
+                                  {/* Circular indicator */}
+                                  <div className={cn(
+                                    "absolute left-0 w-2 h-2 rounded-full z-10 transition-colors",
+                                    isCompleted 
+                                      ? "bg-foreground border-foreground border" 
+                                      : hasAccess 
+                                        ? "bg-background border border-muted-foreground/60 group-hover:border-foreground/60" 
+                                        : "bg-background border border-muted-foreground/30"
+                                  )}></div>
+                                  
+                                  {/* Lesson title */}
+                                  <span className={cn(
+                                    "text-sm leading-relaxed",
+                                    hasAccess ? "text-foreground/80 group-hover:text-foreground" : "text-muted-foreground"
+                                  )}>
+                                    {section.title}
+                                  </span>
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )

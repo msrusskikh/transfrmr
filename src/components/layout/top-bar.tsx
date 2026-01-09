@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, Lock, Unlock, MessageSquare, Menu, X, LogOut, LogIn, User } from "lucide-react"
+import { Search, Lock, Unlock, MessageSquare, Menu, X, LogOut, LogIn, User, Zap } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useCommandMenu } from "@/lib/command-menu"
@@ -89,6 +89,19 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             >
               <MessageSquare className="h-4 w-4" />
               <span className="sr-only hidden md:inline">View reviews</span>
+            </Button>
+          </Link>
+          
+          {/* Feedback Link */}
+          <Link href="/admin/feedback">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 hover:bg-accent/50 transition-all duration-200"
+              title="View feedback"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="sr-only hidden md:inline">View feedback</span>
             </Button>
           </Link>
           

@@ -1,0 +1,13 @@
+[
+  {
+    "message": "Тест",
+    "context": {
+      "url": "http://localhost:3000/learn",
+      "pathname": "/learn",
+      "timestamp": "2026-01-09T19:34:08.949Z"
+    },
+    "userEmail": "msrusskikh@gmail.com",
+    "timestamp": "2026-01-09T19:34:09.445Z",
+    "id": "31b71f39-b6c6-4d3d-8241-835d8befb303"
+  }
+]

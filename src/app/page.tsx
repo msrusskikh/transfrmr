@@ -139,8 +139,8 @@ export default function HomePage() {
               Освойте фундаментальные принципы работы с ИИ за 2 часа. Увеличьте эффективность работы и освободите время для важного
             </p>
             
-            {/* Progress Indicator */}
-            {hasProgress && (
+            {/* Progress Indicator - Only show when user is logged in */}
+            {!authLoading && user && hasProgress && (
               <div className="bg-card/50 rounded-xl p-7 max-w-lg mx-auto border border-border/30 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium text-foreground">Ваш прогресс</span>
@@ -164,16 +164,24 @@ export default function HomePage() {
             )}
             
             <div className="flex items-center justify-center space-x-5 pt-6">
-              <Button asChild size="lg" className="hover:scale-105 transition-transform duration-200 shadow-sm px-8">
-                <Link href="/learn">
-                  Начать обучение
-                </Link>
-              </Button>
-              {hasProgress && (
-                <Button asChild variant="outline" size="lg" className="hover:scale-105 transition-transform duration-200 hover:bg-accent/50 px-8">
+              {!authLoading && user ? (
+                <Button asChild size="lg" className="hover:scale-105 transition-transform duration-200 shadow-sm px-8">
                   <Link href={getContinueDestination()}>
                     Продолжить обучение
                   </Link>
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="hover:scale-105 transition-transform duration-200 shadow-sm px-8"
+                  onClick={() => {
+                    const pricingSection = document.getElementById('pricing-section')
+                    if (pricingSection) {
+                      pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }
+                  }}
+                >
+                  Начать обучение
                 </Button>
               )}
             </div>
@@ -181,7 +189,7 @@ export default function HomePage() {
         </div>
 
         {/* Pricing Section */}
-        <div className="container mx-auto px-6 py-20">
+        <div id="pricing-section" className="container mx-auto px-6 py-20">
           <div className="max-w-lg mx-auto">
             <div className="bg-card/50 rounded-xl p-8 border border-border/30 shadow-sm">
               <div className="text-center space-y-8">
