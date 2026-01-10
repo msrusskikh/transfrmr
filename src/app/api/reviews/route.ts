@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, readFile, mkdir } from 'fs/promises'
 import { join } from 'path'
+import { createClient } from '@/lib/supabase/server'
+import { ADMIN_EMAIL } from '@/lib/admin'
 
 interface ReviewData {
   rating: number
@@ -35,6 +37,26 @@ async function getReviews(): Promise<ReviewData[]> {
 async function saveReviews(reviews: ReviewData[]) {
   await ensureDataDirectory()
   await writeFile(REVIEWS_FILE, JSON.stringify(reviews, null, 2))
+}
+
+// Check if the current user is an admin
+async function checkAdminAccess(): Promise<{ authorized: boolean; userEmail?: string }> {
+  try {
+    const supabase = await createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if (error || !user || !user.email) {
+      return { authorized: false }
+    }
+    
+    return {
+      authorized: user.email === ADMIN_EMAIL,
+      userEmail: user.email
+    }
+  } catch (error) {
+    console.error('Error checking admin access:', error)
+    return { authorized: false }
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -75,6 +97,15 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    // Check admin access
+    const { authorized } = await checkAdminAccess()
+    if (!authorized) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 403 }
+      )
+    }
+
     const reviews = await getReviews()
     return NextResponse.json(reviews)
   } catch (error) {

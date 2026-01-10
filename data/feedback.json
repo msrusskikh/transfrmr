@@ -9,5 +9,17 @@
     "userEmail": "msrusskikh@gmail.com",
     "timestamp": "2026-01-09T19:34:09.445Z",
     "id": "31b71f39-b6c6-4d3d-8241-835d8befb303"
+  },
+  {
+    "message": "test",
+    "context": {
+      "url": "http://localhost:3000/learn/1/3",
+      "pathname": "/learn/1/3",
+      "timestamp": "2026-01-10T09:05:33.769Z"
+    },
+    "userEmail": "msrusskikh@gmail.com",
+    "timestamp": "2026-01-10T09:05:34.304Z",
+    "id": "02378c66-448f-4bea-b79c-126e1af01f81",
+    "status": "Fixed"
   }
 ]

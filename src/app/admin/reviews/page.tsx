@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/lesson/ca
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { isAdminEmail } from '@/lib/admin'
 
 interface ReviewData {
   id: string
@@ -20,10 +22,23 @@ export default function ReviewsPage() {
   const [error, setError] = useState<string | null>(null)
   const [ratingFilter, setRatingFilter] = useState<number | null>(null)
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
+
+  // Check admin access and redirect if unauthorized
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user || !isAdminEmail(user.email)) {
+        router.push('/')
+      }
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
-    fetchReviews()
-  }, [])
+    // Only fetch reviews if user is authenticated and is admin
+    if (!authLoading && user && isAdminEmail(user.email)) {
+      fetchReviews()
+    }
+  }, [authLoading, user])
 
   const fetchReviews = async () => {
     try {
@@ -76,7 +91,8 @@ export default function ReviewsPage() {
     ? reviews.filter(review => review.rating === ratingFilter)
     : reviews
 
-  if (loading) {
+  // Show loading state while checking auth or if not authorized
+  if (authLoading || loading || !user || !isAdminEmail(user.email)) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-6 py-8">

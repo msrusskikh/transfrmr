@@ -7,6 +7,7 @@ import { useCommandMenu } from "@/lib/command-menu"
 import { useProgressStore } from "@/lib/progress"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
+import { isAdminEmail } from "@/lib/admin"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,32 +79,36 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             <span className="sr-only hidden md:inline">Open command menu</span>
           </Button>
           
-          
-          {/* Reviews Link */}
-          <Link href="/admin/reviews">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 hover:bg-accent/50 transition-all duration-200"
-              title="View reviews"
-            >
-              <MessageSquare className="h-4 w-4" />
-              <span className="sr-only hidden md:inline">View reviews</span>
-            </Button>
-          </Link>
-          
-          {/* Feedback Link */}
-          <Link href="/admin/feedback">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 hover:bg-accent/50 transition-all duration-200"
-              title="View feedback"
-            >
-              <Zap className="h-4 w-4" />
-              <span className="sr-only hidden md:inline">View feedback</span>
-            </Button>
-          </Link>
+          {/* Admin-only buttons */}
+          {!authLoading && user && isAdminEmail(user.email) && (
+            <>
+              {/* Reviews Link */}
+              <Link href="/admin/reviews">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 hover:bg-accent/50 transition-all duration-200"
+                  title="View reviews"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  <span className="sr-only hidden md:inline">View reviews</span>
+                </Button>
+              </Link>
+              
+              {/* Feedback Link */}
+              <Link href="/admin/feedback">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 hover:bg-accent/50 transition-all duration-200"
+                  title="View feedback"
+                >
+                  <Zap className="h-4 w-4" />
+                  <span className="sr-only hidden md:inline">View feedback</span>
+                </Button>
+              </Link>
+            </>
+          )}
           
           {/* Authentication UI */}
           {!authLoading && (
@@ -140,33 +145,35 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             </>
           )}
           
-          {/* Developer Mode Toggle */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              console.log('Dev mode toggle clicked, current state:', isDevMode)
-              toggleDevMode()
-            }}
-            className={`h-9 px-3 transition-all duration-200 ${
-              isDevMode 
-                ? 'bg-green-600 hover:bg-green-700 shadow-sm text-white border-green-600' 
-                : 'hover:bg-accent/50'
-            }`}
-            title={isDevMode ? "Disable Developer Mode" : "Enable Developer Mode"}
-          >
-            {isDevMode ? (
-              <>
-                <Unlock className="h-4 w-4 mr-2" />
-                <span className="text-xs">Dev Mode</span>
-              </>
-            ) : (
-              <>
-                <Lock className="h-4 w-4 mr-2" />
-                <span className="text-xs">Dev Mode</span>
-              </>
-            )}
-          </Button>
+          {/* Developer Mode Toggle - Admin only */}
+          {!authLoading && user && isAdminEmail(user.email) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                console.log('Dev mode toggle clicked, current state:', isDevMode)
+                toggleDevMode()
+              }}
+              className={`h-9 px-3 transition-all duration-200 ${
+                isDevMode 
+                  ? 'bg-green-600 hover:bg-green-700 shadow-sm text-white border-green-600' 
+                  : 'hover:bg-accent/50'
+              }`}
+              title={isDevMode ? "Disable Developer Mode" : "Enable Developer Mode"}
+            >
+              {isDevMode ? (
+                <>
+                  <Unlock className="h-4 w-4 mr-2" />
+                  <span className="text-xs">Dev Mode</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4 mr-2" />
+                  <span className="text-xs">Dev Mode</span>
+                </>
+              )}
+            </Button>
+          )}
           
           {/* <ThemeToggle /> */}
         </div>

@@ -1,12 +1,14 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { Zap, Calendar, User, MessageSquare, ArrowLeft, Globe, Mail } from 'lucide-react'
+import { Zap, Calendar, User, MessageSquare, ArrowLeft, Globe, Mail, MailOpen } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/lesson/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { getLesson, getModule } from '@/lib/content'
+import { useAuth } from '@/contexts/AuthContext'
+import { isAdminEmail } from '@/lib/admin'
 
 interface FeedbackData {
   id: string
@@ -18,6 +20,7 @@ interface FeedbackData {
   }
   userEmail?: string
   timestamp: string
+  status?: 'New' | 'Fixed'
 }
 
 export default function FeedbackPage() {
@@ -25,22 +28,65 @@ export default function FeedbackPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pageFilter, setPageFilter] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'fixed'>('all')
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
+
+  // Check admin access and redirect if unauthorized
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user || !isAdminEmail(user.email)) {
+        router.push('/')
+      }
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
-    fetchFeedback()
-  }, [])
+    // Only fetch feedback if user is authenticated and is admin
+    if (!authLoading && user && isAdminEmail(user.email)) {
+      fetchFeedback()
+    }
+  }, [authLoading, user])
 
   const fetchFeedback = async () => {
     try {
       const response = await fetch('/api/feedback')
       if (!response.ok) throw new Error('Failed to fetch feedback')
       const data = await response.json()
-      setFeedback(data)
+      // Ensure all feedback has a status (default to 'New' if missing)
+      const feedbackWithStatus = data.map((item: FeedbackData) => ({
+        ...item,
+        status: item.status || 'New'
+      }))
+      setFeedback(feedbackWithStatus)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const updateStatus = async (id: string, newStatus: 'New' | 'Fixed') => {
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+
+      if (!response.ok) throw new Error('Failed to update status')
+
+      // Update local state
+      setFeedback((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      )
+    } catch (err) {
+      console.error('Error updating status:', err)
+      setError(err instanceof Error ? err.message : 'Failed to update status')
     }
   }
 
@@ -97,11 +143,24 @@ export default function FeedbackPage() {
     new Set(feedback.map(f => f.context.pathname))
   ).sort()
 
-  const filteredFeedback = pageFilter
-    ? feedback.filter(f => f.context.pathname === pageFilter)
-    : feedback
+  const filteredFeedback = feedback.filter(f => {
+    // Filter by page if pageFilter is set
+    if (pageFilter && f.context.pathname !== pageFilter) {
+      return false
+    }
+    // Filter by status
+    if (statusFilter === 'new') {
+      return f.status !== 'Fixed'
+    }
+    if (statusFilter === 'fixed') {
+      return f.status === 'Fixed'
+    }
+    // statusFilter === 'all'
+    return true
+  })
 
-  if (loading) {
+  // Show loading state while checking auth or if not authorized
+  if (authLoading || loading || !user || !isAdminEmail(user.email)) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-6 py-8">
@@ -154,25 +213,25 @@ export default function FeedbackPage() {
               </Button>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6CC93]/20">
-              <Zap className="h-5 w-5 text-[#E6CC93]" />
-            </div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Обратная связь
-            </h1>
-          </div>
+          <h1 className="text-3xl font-bold text-foreground">
+            Обратная связь
+          </h1>
         </div>
 
         {/* Stats */}
         {feedback.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card>
+            <Card
+              className={`cursor-pointer transition-all hover:shadow-md ${
+                statusFilter === 'all' ? 'ring-1 ring-border border-border' : ''
+              }`}
+              onClick={() => setStatusFilter('all')}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2">
                   <MessageSquare className="h-5 w-5 text-blue-500" />
                   <span className="text-sm font-medium text-muted-foreground">
-                    Всего отзывов
+                    Total reports
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-foreground mt-2">
@@ -181,30 +240,40 @@ export default function FeedbackPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card
+              className={`cursor-pointer transition-all hover:shadow-md ${
+                statusFilter === 'new' ? 'ring-1 ring-border border-border' : ''
+              }`}
+              onClick={() => setStatusFilter('new')}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2">
-                  <Globe className="h-5 w-5 text-green-500" />
+                  <MailOpen className="h-5 w-5 text-purple-500" />
                   <span className="text-sm font-medium text-muted-foreground">
-                    Уникальных страниц
+                    New
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-foreground mt-2">
-                  {uniquePages.length}
+                  {feedback.filter(f => f.status !== 'Fixed').length}
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card
+              className={`cursor-pointer transition-all hover:shadow-md ${
+                statusFilter === 'fixed' ? 'ring-1 ring-border border-border' : ''
+              }`}
+              onClick={() => setStatusFilter('fixed')}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5 text-purple-500" />
+                  <Mail className="h-5 w-5" style={{ color: '#E6CC93' }} />
                   <span className="text-sm font-medium text-muted-foreground">
-                    С email
+                    Fixed
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-foreground mt-2">
-                  {feedback.filter(f => f.userEmail).length}
+                  {feedback.filter(f => f.status === 'Fixed').length}
                 </p>
               </CardContent>
             </Card>
@@ -214,12 +283,6 @@ export default function FeedbackPage() {
         {/* Page Filter */}
         {uniquePages.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center space-x-2 mb-3">
-              <Globe className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">
-                Фильтр по странице:
-              </span>
-            </div>
             <div className="flex flex-wrap gap-2">
               <Button
                 variant={pageFilter === null ? "default" : "outline"}
@@ -255,40 +318,19 @@ export default function FeedbackPage() {
           </div>
         )}
 
-        {/* Filter Status */}
-        {pageFilter && (
-          <div className="flex items-center justify-between bg-muted/50 rounded-lg p-4 mb-6">
-            <div className="flex items-center space-x-2">
-              <Globe className="h-4 w-4 text-blue-500" />
-              <span className="text-sm font-medium text-foreground">
-                Показаны отзывы со страницы: {getPageName(pageFilter)}
-              </span>
-              <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                {filteredFeedback.length} из {feedback.length}
-              </Badge>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setPageFilter(null)}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Сбросить фильтр
-            </Button>
-          </div>
-        )}
-
         {/* Feedback List */}
         {filteredFeedback.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
               <Zap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">
-                {pageFilter ? 'Нет отзывов с этой страницы' : 'Пока нет отзывов'}
+                {pageFilter || statusFilter !== 'all' 
+                  ? 'Нет репортов, соответствующих фильтрам' 
+                  : 'Пока нет отзывов'}
               </h3>
               <p className="text-muted-foreground">
-                {pageFilter 
-                  ? 'Попробуйте выбрать другую страницу или сбросить фильтр.'
+                {pageFilter || statusFilter !== 'all'
+                  ? 'Попробуйте изменить фильтры или сбросить их.'
                   : 'Отзывы появятся здесь, как только пользователи начнут их оставлять.'
                 }
               </p>
@@ -312,12 +354,6 @@ export default function FeedbackPage() {
                             <h3 className="font-semibold text-foreground">
                               {item.userEmail || 'Анонимный пользователь'}
                             </h3>
-                            {item.userEmail && (
-                              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                                <Mail className="h-3 w-3" />
-                                {item.userEmail}
-                              </p>
-                            )}
                             {!item.userEmail && (
                               <p className="text-sm text-muted-foreground">
                                 ID: {item.id.slice(0, 8)}...
@@ -326,6 +362,22 @@ export default function FeedbackPage() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
+                          {item.status === 'Fixed' ? (
+                            <Badge
+                              variant="default"
+                              style={{ backgroundColor: '#B19D73', color: '#000' }}
+                              className="dark:bg-[#E6CC93]/80 dark:text-[#000]"
+                            >
+                              Fixed
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="secondary"
+                              className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+                            >
+                              New
+                            </Badge>
+                          )}
                           <div className="flex items-center text-muted-foreground text-sm">
                             <Calendar className="h-3 w-3 mr-1" />
                             {formatDate(item.timestamp)}
@@ -337,33 +389,34 @@ export default function FeedbackPage() {
                       <div className="space-y-4">
                         {/* Page/Lesson Info */}
                         <div className="flex items-center space-x-2 text-sm">
-                          <Globe className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Страница:</span>
-                          <Badge variant="outline" className="font-medium">
+                          <Badge 
+                            variant="outline" 
+                            className="font-medium cursor-pointer transition-colors [&:not(:hover)]:border-border [&:not(:hover)]:text-muted-foreground hover:border-border/50 hover:text-muted-foreground/70"
+                            onClick={() => router.push(item.context.pathname)}
+                          >
                             {pageName}
                           </Badge>
-                          {item.context.pathname !== pageName && (
-                            <span className="text-xs text-muted-foreground">
-                              ({item.context.pathname})
-                            </span>
-                          )}
                         </div>
 
                         {/* Feedback Message */}
                         <div>
-                          <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
-                            <MessageSquare className="h-4 w-4" />
-                            Сообщение:
-                          </h4>
                           <p className="text-foreground leading-relaxed bg-muted/30 rounded-lg p-4">
                             {item.message}
                           </p>
                         </div>
 
-                        {/* URL (if different from pathname) */}
-                        {item.context.url && item.context.url !== item.context.pathname && (
-                          <div className="text-xs text-muted-foreground break-all">
-                            URL: {item.context.url}
+                        {/* Action Buttons */}
+                        {item.status !== 'Fixed' && (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => updateStatus(item.id, 'Fixed')}
+                              style={{ backgroundColor: '#E6CC93', color: '#000', borderColor: '#E6CC93' }}
+                              className="hover:opacity-90"
+                            >
+                              Fixed
+                            </Button>
                           </div>
                         )}
                       </div>
