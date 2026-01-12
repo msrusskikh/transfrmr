@@ -26,8 +26,34 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [checkingAccess, setCheckingAccess] = useState(true)
   const router = useRouter()
   const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
+
+  // Check for payment access token on page load
+  useEffect(() => {
+    const checkAccessToken = async () => {
+      try {
+        const response = await fetch('/api/payment/check-access-token')
+        const data = await response.json()
+
+        if (!data.valid) {
+          // No valid access token - redirect to home page
+          router.replace('/')
+          return
+        }
+
+        // Token is valid - allow access
+        setCheckingAccess(false)
+      } catch (error) {
+        console.error('Error checking access token:', error)
+        // On error, redirect to home page for security
+        router.replace('/')
+      }
+    }
+
+    checkAccessToken()
+  }, [router])
 
   // Defer client creation to client-side only
   useEffect(() => {
@@ -109,6 +135,19 @@ export default function SignupPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show loading state while checking access token
+  if (checkingAccess) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center text-muted-foreground">Загрузка...</div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

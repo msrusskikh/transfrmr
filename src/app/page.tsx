@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/card"
 import { useProgressStore } from "@/lib/progress"
 import { modules } from "@/lib/content"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { User, LogOut, LogIn } from "lucide-react"
 import {
   DropdownMenu,
@@ -20,12 +20,52 @@ export default function HomePage() {
   const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
   const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   
   // Force dark theme on mount
   useEffect(() => {
     document.documentElement.classList.add('dark')
     localStorage.setItem('theme', 'dark')
   }, [])
+
+  // Handle payment callback query parameters
+  useEffect(() => {
+    const success = searchParams.get('success')
+    const error = searchParams.get('error')
+    const orderId = searchParams.get('id')
+
+    if (success && orderId) {
+      // Payment successful - set access token and redirect to signup
+      const setAccessToken = async () => {
+        try {
+          const response = await fetch('/api/payment/set-access-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+          })
+
+          if (response.ok) {
+            // Remove query params and redirect to signup
+            router.replace('/signup')
+          } else {
+            console.error('Failed to set access token')
+            router.replace('/')
+          }
+        } catch (error) {
+          console.error('Error setting access token:', error)
+          router.replace('/')
+        }
+      }
+
+      setAccessToken()
+    } else if (error && orderId) {
+      // Payment failed - user already saw notification on payment processor side
+      // Just clean up the URL by removing query params
+      router.replace('/')
+    }
+  }, [searchParams, router])
   
   const handleSignOut = async () => {
     // Navigate immediately for instant feedback
