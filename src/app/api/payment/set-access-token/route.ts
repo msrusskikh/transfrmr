@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
-export const TOKEN_COOKIE_NAME = 'payment_access_token'
+const TOKEN_COOKIE_NAME = 'payment_access_token'
 const TOKEN_EXPIRY_HOURS = 1
 
 export async function POST(request: NextRequest) {
