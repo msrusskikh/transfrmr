@@ -8,13 +8,63 @@ import { modules } from "@/lib/content"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter, useSearchParams } from "next/navigation"
-import { User, LogOut, LogIn } from "lucide-react"
+import { 
+  User, 
+  LogOut, 
+  LogIn, 
+  Sparkles, 
+  Clock, 
+  Target, 
+  Gamepad2, 
+  Briefcase, 
+  Smartphone,
+  Brain,
+  MessageSquare,
+  Wrench,
+  Lightbulb,
+  AlertCircle,
+  Shield,
+  TrendingUp,
+  ChevronDown,
+  CheckCircle2
+} from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+// Course Module Card Component
+function CourseModuleCard({ module }: { module: { title: string; description: string; icon: React.ComponentType<{ className?: string }> } }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const Icon = module.icon
+
+  return (
+    <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+      <CardHeader className="pb-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4 flex-1">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+              <Icon className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <CardTitle className="text-lg mb-2">{module.title}</CardTitle>
+              {isOpen && (
+                <p className="text-muted-foreground leading-relaxed text-sm mt-2">
+                  {module.description}
+                </p>
+              )}
+            </div>
+          </div>
+          <ChevronDown 
+            className={`h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
+          />
+        </div>
+      </CardHeader>
+    </Card>
+  )
+}
 
 export default function HomePage() {
   const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
@@ -168,16 +218,32 @@ export default function HomePage() {
       {/* Main Content - flex-grow to push footer down */}
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="container mx-auto px-6 py-28">
-          <div className="max-w-4xl mx-auto text-center space-y-10">
-            <h1 className="text-6xl font-bold tracking-tight text-foreground leading-tight">
-              Интерактивный курс
-              <br />
-              <span className="text-primary">AI Fundamentals</span>
+        <section className="container mx-auto px-6 py-20 md:py-32">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight">
+              Начните пользоваться ИИ легко и уверенно
             </h1>
-            <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              Освойте фундаментальные принципы работы с ИИ за 2 часа. Увеличьте эффективность работы и освободите время для важного
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+              Трансформер — это игровой курс по основам ИИ. Всё необходимое, чтобы с нуля начать применять ИИ в работе — просто, практично и без перегруза.
             </p>
+            
+            {/* Simple Illustration - People collaborating with AI */}
+            <div className="flex items-center justify-center py-8">
+              <div className="relative w-64 h-48 md:w-80 md:h-60">
+                <svg viewBox="0 0 320 240" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Simple line-art illustration of people and AI */}
+                  <circle cx="80" cy="120" r="30" stroke="currentColor" strokeWidth="2" fill="none" className="text-muted-foreground/30"/>
+                  <path d="M 80 150 L 80 180 M 60 170 L 80 180 L 100 170" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/30"/>
+                  <circle cx="160" cy="100" r="25" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/40"/>
+                  <rect x="140" y="125" width="40" height="50" rx="5" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/40"/>
+                  <circle cx="240" cy="120" r="30" stroke="currentColor" strokeWidth="2" fill="none" className="text-muted-foreground/30"/>
+                  <path d="M 240 150 L 240 180 M 220 170 L 240 180 L 260 170" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/30"/>
+                  {/* AI symbol in center */}
+                  <circle cx="160" cy="100" r="15" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/60"/>
+                  <path d="M 150 100 L 170 100 M 160 90 L 160 110" stroke="currentColor" strokeWidth="2" className="text-primary/60"/>
+                </svg>
+              </div>
+            </div>
             
             {/* Progress Indicator - Only show when user is logged in */}
             {!authLoading && user && hasProgress && (
@@ -226,75 +292,254 @@ export default function HomePage() {
               )}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Pricing Section */}
-        <div id="pricing-section" className="container mx-auto px-6 py-20">
-          <div className="max-w-lg mx-auto">
-            <div className="bg-card/50 rounded-xl p-8 border border-border/30 shadow-sm">
-              <div className="text-center space-y-8">
-                {/* Header */}
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                    Стоимость курса
-                  </h2>
-                  <p className="text-muted-foreground text-sm">
-                    Полный доступ ко всем материалам
+        {/* Features Section */}
+        <section className="container mx-auto px-6 py-20">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Feature 1 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Sparkles className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">С нуля, без стресса</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Не нужно ничего знать про ИИ или «промпты» — начнём с самых простых шагов.
                   </p>
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* Pricing Display */}
-                <div className="space-y-5">
-                  <div className="flex items-baseline justify-center gap-4">
-                    <span className="text-5xl font-bold tracking-tight text-foreground">3 290 ₽</span>
-                    <span className="text-lg text-muted-foreground line-through">11 000 ₽</span>
+              {/* Feature 2 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Clock className="h-6 w-6 text-primary" />
                   </div>
-                  
-                  {/* Discount Badge */}
-                  <div className="inline-flex items-center px-3 py-1 rounded-md bg-muted/30 border border-border/40">
-                    <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Экономия 70%</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-full h-px bg-border/50"></div>
-
-                {/* Features List */}
-                <div className="space-y-3 text-left">
-                  <div className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-foreground">50+ интерактивных уроков</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-foreground">Практические задания и кейсы</p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-foreground">Пожизненный доступ к материалам</p>
-                  </div>
-                </div>
-
-                {/* Purchase Button */}
-                <div className="pt-2">
-                  <Button 
-                    size="lg" 
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white hover:scale-105 transition-transform duration-200 shadow-sm px-8 text-base font-medium"
-                    onClick={() => {
-                      // TODO: Add purchase logic here
-                      alert('Функция покупки будет добавлена позже')
-                    }}
-                  >
-                    Купить курс
-                  </Button>
-                  <p className="text-xs text-muted-foreground/70 mt-3">
-                    Безопасная оплата • Мгновенный доступ
+                  <CardTitle className="text-xl">Учитесь в своём ритме</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Уроки по 5–15 минут. Можно пройти за обед или между делами.
                   </p>
+                </CardContent>
+              </Card>
+
+              {/* Feature 3 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Target className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Максимум практики</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Интерактивные задания, мини-лабы и шпаргалки закрепят знания и дадут уверенность.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Feature 4 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Gamepad2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Учёба как игра</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Прогресс, уровни, челленджи. Лёгкость и азарт вместо скуки.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Feature 5 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Briefcase className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Всё по делу</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Только то, что реально нужно для работы: инструменты, сценарии, практика, этика.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Feature 6 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 transition-colors">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Smartphone className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Всегда под рукой</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Курс адаптирован под телефон. Учитесь где угодно — в метро, в очереди, дома на диване.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Course Content Section */}
+        <section className="container mx-auto px-6 py-20">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+              Про что расскажем на курсе
+            </h2>
+            <div className="space-y-4">
+              {[
+                {
+                  title: "Как работает современный ИИ",
+                  description: "Простое объяснение без формул и заумных терминов. Поймёте, что ИИ может и чего от него ждать не стоит.",
+                  icon: Brain
+                },
+                {
+                  title: "Как правильно задавать вопросы",
+                  description: "Мини-гайд по «промптам» — на понятных примерах.",
+                  icon: MessageSquare
+                },
+                {
+                  title: "Инструменты для работы",
+                  description: "Разберём ChatGPT, Claude, Midjourney и другие помощники.",
+                  icon: Wrench
+                },
+                {
+                  title: "Реальные рабочие сценарии",
+                  description: "Маркетинг, тексты, аналитика, исследования, презентации. Всё на практических кейсах.",
+                  icon: Lightbulb
+                },
+                {
+                  title: "Как решать ошибки и «тупики»",
+                  description: "Что делать, если ИИ отвечает не то, и как быстро вернуться к делу.",
+                  icon: AlertCircle
+                },
+                {
+                  title: "Этика и границы",
+                  description: "Как использовать ИИ безопасно и ответственно.",
+                  icon: Shield
+                },
+                {
+                  title: "Как оставаться в курсе",
+                  description: "Простой фреймворк: как отслеживать новинки и не утонуть в потоке информации.",
+                  icon: TrendingUp
+                }
+              ].map((module, index) => (
+                <CourseModuleCard key={index} module={module} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Ideal For Section */}
+        <section className="container mx-auto px-6 py-20">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+              Курс идеально подойдёт, если:
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                "Вы полный новичок и пользовались ChatGPT максимум пару раз",
+                "Любите, когда учёба похожа на игру, а не на лекцию",
+                "Хотите ускорить рабочие задачи и повысить продуктивность",
+                "Времени мало, а разобраться хочется качественно",
+                "Предпочитаете рабочие сценарии вместо скучной теории",
+                "Хотите попробовать ИИ, но боитесь запутаться"
+              ].map((item, index) => (
+                <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-card/20 border border-border/20 hover:bg-card/30 transition-colors">
+                  <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <p className="text-foreground leading-relaxed">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section with Pricing */}
+        <section id="pricing-section" className="container mx-auto px-6 py-20">
+          <div className="max-w-4xl mx-auto text-center space-y-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+                Готовы стать уверенным пользователем ИИ?
+              </h2>
+            </div>
+            
+            <div className="max-w-lg mx-auto">
+              <div className="bg-card/50 rounded-xl p-8 border border-border/30 shadow-sm">
+                <div className="text-center space-y-8">
+                  {/* Header */}
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-bold tracking-tight text-foreground">
+                      Стоимость курса
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      Полный доступ ко всем материалам
+                    </p>
+                  </div>
+
+                  {/* Pricing Display */}
+                  <div className="space-y-5">
+                    <div className="flex items-baseline justify-center gap-4">
+                      <span className="text-5xl font-bold tracking-tight text-foreground">3 290 ₽</span>
+                      <span className="text-lg text-muted-foreground line-through">11 000 ₽</span>
+                    </div>
+                    
+                    {/* Discount Badge */}
+                    <div className="inline-flex items-center px-3 py-1 rounded-md bg-muted/30 border border-border/40">
+                      <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Экономия 70%</span>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-full h-px bg-border/50"></div>
+
+                  {/* Features List */}
+                  <div className="space-y-3 text-left">
+                    <div className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                      <p className="text-sm text-foreground">50+ интерактивных уроков</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                      <p className="text-sm text-foreground">Практические задания и кейсы</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                      <p className="text-sm text-foreground">Пожизненный доступ к материалам</p>
+                    </div>
+                  </div>
+
+                  {/* Purchase Button */}
+                  <div className="pt-2">
+                    <Button 
+                      size="lg" 
+                      className="w-full bg-teal-600 hover:bg-teal-700 text-white hover:scale-105 transition-transform duration-200 shadow-sm px-8 text-base font-medium"
+                      onClick={() => {
+                        // TODO: Add purchase logic here
+                        alert('Функция покупки будет добавлена позже')
+                      }}
+                    >
+                      Купить курс
+                    </Button>
+                    <p className="text-xs text-muted-foreground/70 mt-3">
+                      Безопасная оплата • Мгновенный доступ
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       {/* Footer with OpenAI Brand Reference - Now at the very bottom */}
@@ -330,12 +575,6 @@ export default function HomePage() {
                   Политика конфиденциальности
                 </Link>
               </div>
-            </div>
-
-            {/* OpenAI Brand Reference */}
-            <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground/60 font-mono tracking-wide">
-              <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
-              <span>Powered by OpenAI</span>
             </div>
           </div>
         </div>
