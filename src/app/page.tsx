@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/card"
 import { useProgressStore } from "@/lib/progress"
 import { modules } from "@/lib/content"
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter, useSearchParams } from "next/navigation"
 import { 
@@ -66,11 +66,19 @@ function CourseModuleCard({ module }: { module: { title: string; description: st
   )
 }
 
-// Component to handle payment callback query parameters
-function PaymentCallbackHandler() {
+export default function HomePage() {
+  const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
+  const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
+  
+  // Force dark theme on mount
+  useEffect(() => {
+    document.documentElement.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
+  }, [])
 
+  // Handle payment callback query parameters
   useEffect(() => {
     const success = searchParams.get('success')
     const error = searchParams.get('error')
@@ -108,20 +116,6 @@ function PaymentCallbackHandler() {
       router.replace('/')
     }
   }, [searchParams, router])
-
-  return null
-}
-
-export default function HomePage() {
-  const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
-  const { user, signOut, loading: authLoading } = useAuth()
-  const router = useRouter()
-  
-  // Force dark theme on mount
-  useEffect(() => {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  }, [])
   
   const handleSignOut = async () => {
     // Navigate immediately for instant feedback
@@ -182,9 +176,6 @@ export default function HomePage() {
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Suspense fallback={null}>
-        <PaymentCallbackHandler />
-      </Suspense>
       {/* Header with Трансформер text */}
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="container flex h-14 items-center px-4 justify-between">

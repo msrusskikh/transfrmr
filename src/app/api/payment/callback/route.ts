@@ -37,8 +37,8 @@ function getClientIP(request: NextRequest): string | null {
     return realIP.trim()
   }
   
-  // No IP found in headers
-  return null
+  // Fallback to request IP (may not work in all environments)
+  return request.ip || null
 }
 
 // Verify IP address is from allowed list
