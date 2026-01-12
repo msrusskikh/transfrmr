@@ -227,21 +227,14 @@ export default function HomePage() {
               Трансформер — это игровой курс по основам ИИ. Всё необходимое, чтобы с нуля начать применять ИИ в работе — просто, практично и без перегруза.
             </p>
             
-            {/* Simple Illustration - People collaborating with AI */}
+            {/* Hero Image */}
             <div className="flex items-center justify-center py-8">
               <div className="relative w-64 h-48 md:w-80 md:h-60">
-                <svg viewBox="0 0 320 240" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Simple line-art illustration of people and AI */}
-                  <circle cx="80" cy="120" r="30" stroke="currentColor" strokeWidth="2" fill="none" className="text-muted-foreground/30"/>
-                  <path d="M 80 150 L 80 180 M 60 170 L 80 180 L 100 170" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/30"/>
-                  <circle cx="160" cy="100" r="25" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/40"/>
-                  <rect x="140" y="125" width="40" height="50" rx="5" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/40"/>
-                  <circle cx="240" cy="120" r="30" stroke="currentColor" strokeWidth="2" fill="none" className="text-muted-foreground/30"/>
-                  <path d="M 240 150 L 240 180 M 220 170 L 240 180 L 260 170" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/30"/>
-                  {/* AI symbol in center */}
-                  <circle cx="160" cy="100" r="15" stroke="currentColor" strokeWidth="2" fill="none" className="text-primary/60"/>
-                  <path d="M 150 100 L 170 100 M 160 90 L 160 110" stroke="currentColor" strokeWidth="2" className="text-primary/60"/>
-                </svg>
+                <img 
+                  src="/e325def114bcf010422765381c83c248f307c2719ffc3c56a5b284a53cfc5a79.png" 
+                  alt="Team collaboration" 
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
             
