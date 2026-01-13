@@ -867,6 +867,10 @@
 .footer-mobile-container {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .footer-mobile-item {
@@ -879,6 +883,13 @@
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  text-align: left !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  vertical-align: top !important;
 }
 
 .footer-mobile-item:last-child {
@@ -899,7 +910,13 @@
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
-  vertical-align: baseline !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  text-align: left !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  vertical-align: top !important;
 }
 
 .footer-mobile-container a.footer-mobile-item:last-child,
@@ -908,6 +925,19 @@
 .footer-mobile-container a.footer-mobile-item:last-child:active,
 .footer-mobile-container a.footer-mobile-item:last-child:focus {
   margin-bottom: 0 !important;
+}
+
+/* iPhone Plus specific fixes (414px width) */
+@media (min-width: 414px) and (max-width: 767px) {
+  .footer-mobile-container {
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .footer-mobile-item {
+    text-align: left !important;
+    align-self: flex-start !important;
+  }
 }
 
 @media (min-width: 768px) {
