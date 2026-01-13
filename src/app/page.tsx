@@ -556,7 +556,9 @@ export default function HomePage() {
           {/* Mobile: Single column with consistent spacing */}
           <div className="footer-mobile-container">
             <p className="footer-mobile-item text-sm text-foreground" style={{ marginBottom: '0.5rem' }}>Русских М.С.</p>
-            <p className="footer-mobile-item text-sm text-muted-foreground" style={{ marginBottom: '0.5rem' }}>ИНН&nbsp;770475475401</p>
+            <p className="footer-mobile-item text-sm text-muted-foreground" style={{ marginBottom: '0.5rem', whiteSpace: 'nowrap' }}>
+              <span style={{ marginRight: '0.25rem' }}>ИНН</span>770475475401
+            </p>
             <a 
               href="mailto:hi@transfrmr.ai" 
               className="footer-mobile-item text-sm text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation block"
