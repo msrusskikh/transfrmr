@@ -862,3 +862,68 @@
     @apply text-base;
   }
 }
+
+/* Footer mobile spacing fix */
+.footer-mobile-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-mobile-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+  display: block !important;
+  text-decoration: none;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.footer-mobile-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure links and Next.js Link components have exact same spacing as paragraphs */
+.footer-mobile-container a.footer-mobile-item,
+.footer-mobile-container a.footer-mobile-item:visited,
+.footer-mobile-container a.footer-mobile-item:hover,
+.footer-mobile-container a.footer-mobile-item:active,
+.footer-mobile-container a.footer-mobile-item:focus {
+  margin: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  vertical-align: baseline !important;
+}
+
+.footer-mobile-container a.footer-mobile-item:last-child,
+.footer-mobile-container a.footer-mobile-item:last-child:visited,
+.footer-mobile-container a.footer-mobile-item:last-child:hover,
+.footer-mobile-container a.footer-mobile-item:last-child:active,
+.footer-mobile-container a.footer-mobile-item:last-child:focus {
+  margin-bottom: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .footer-mobile-container {
+    display: none;
+  }
+}
+
+.footer-desktop-container {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .footer-desktop-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}

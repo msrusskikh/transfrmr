@@ -553,46 +553,61 @@ export default function HomePage() {
       {/* Footer with OpenAI Brand Reference - Now at the very bottom */}
       <footer className="mt-auto py-6 min-[768px]:py-8 border-t border-border/30" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
         <div className="container mx-auto px-4 min-[375px]:px-6">
-          <div className="flex flex-col space-y-6">
-            {/* Main Footer Content - Left and Right */}
-            <div className="flex items-start justify-between">
-              {/* Contact Information - Left */}
-              <div className="text-left">
-                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
-                  <p className="text-sm min-[768px]:text-base text-foreground leading-none">Русских М.С.</p>
-                </div>
-                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
-                  <p className="text-sm min-[768px]:text-base text-muted-foreground leading-none">ИНН 770475475401</p>
-                </div>
-                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
-                  <a 
-                    href="mailto:hi@transfrmr.ai" 
-                    className="text-sm min-[768px]:text-base text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation leading-none py-1.5 px-2 -ml-2"
-                  >
-                    hi@transfrmr.ai
-                  </a>
-                </div>
-              </div>
+          {/* Mobile: Single column with consistent spacing */}
+          <div className="footer-mobile-container">
+            <p className="footer-mobile-item text-sm text-foreground" style={{ marginBottom: '0.5rem' }}>Русских М.С.</p>
+            <p className="footer-mobile-item text-sm text-muted-foreground" style={{ marginBottom: '0.5rem' }}>ИНН 770475475401</p>
+            <a 
+              href="mailto:hi@transfrmr.ai" 
+              className="footer-mobile-item text-sm text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation block"
+              style={{ marginBottom: '0.5rem' }}
+            >
+              hi@transfrmr.ai
+            </a>
+            <Link 
+              href="/oferta" 
+              className="footer-mobile-item text-sm text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation block"
+              style={{ marginBottom: '0.5rem' }}
+            >
+              Оферта
+            </Link>
+            <Link 
+              href="/privacy-policy" 
+              className="footer-mobile-item text-sm text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation block"
+              style={{ marginBottom: '0' }}
+            >
+              Политика конфиденциальности
+            </Link>
+          </div>
 
-              {/* Legal Links - Right */}
-              <div className="text-right">
-                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center justify-end">
-                  <Link 
-                    href="/oferta" 
-                    className="text-sm min-[768px]:text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-none py-1.5 px-2 -mr-2"
-                  >
-                    Оферта
-                  </Link>
-                </div>
-                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center justify-end">
-                  <Link 
-                    href="/privacy-policy" 
-                    className="text-sm min-[768px]:text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-none py-1.5 px-2 -mr-2"
-                  >
-                    Политика конфиденциальности
-                  </Link>
-                </div>
-              </div>
+          {/* Desktop: Two columns side by side */}
+          <div className="footer-desktop-container">
+            {/* Contact Information - Left */}
+            <div className="flex flex-col space-y-1.5">
+              <p className="text-base text-foreground leading-relaxed">Русских М.С.</p>
+              <p className="text-base text-muted-foreground leading-relaxed">ИНН 770475475401</p>
+              <a 
+                href="mailto:hi@transfrmr.ai" 
+                className="text-base text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation leading-relaxed inline-block"
+              >
+                hi@transfrmr.ai
+              </a>
+            </div>
+
+            {/* Legal Links - Right */}
+            <div className="flex flex-col space-y-1.5 items-end text-right">
+              <Link 
+                href="/oferta" 
+                className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-relaxed inline-block"
+              >
+                Оферта
+              </Link>
+              <Link 
+                href="/privacy-policy" 
+                className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-relaxed inline-block"
+              >
+                Политика конфиденциальности
+              </Link>
             </div>
           </div>
         </div>
