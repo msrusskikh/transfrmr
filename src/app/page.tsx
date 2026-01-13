@@ -558,16 +558,16 @@ export default function HomePage() {
             <div className="flex items-start justify-between">
               {/* Contact Information - Left */}
               <div className="text-left">
-                <div className="h-[1.7rem] flex items-center">
-                  <p className="text-base text-foreground">Русских М.С.</p>
+                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
+                  <p className="text-sm min-[768px]:text-base text-foreground leading-none">Русских М.С.</p>
                 </div>
-                <div className="h-[1.7rem] flex items-center">
-                  <p className="text-base text-muted-foreground">ИНН 770475475401</p>
+                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
+                  <p className="text-sm min-[768px]:text-base text-muted-foreground leading-none">ИНН 770475475401</p>
                 </div>
-                <div className="h-[1.7rem] flex items-center">
+                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center">
                   <a 
                     href="mailto:hi@transfrmr.ai" 
-                    className="text-base text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation inline-block py-2 px-2 -ml-2 -my-2"
+                    className="text-sm min-[768px]:text-base text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation leading-none py-1.5 px-2 -ml-2"
                   >
                     hi@transfrmr.ai
                   </a>
@@ -576,18 +576,18 @@ export default function HomePage() {
 
               {/* Legal Links - Right */}
               <div className="text-right">
-                <div className="h-[1.7rem] flex items-center justify-end">
+                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center justify-end">
                   <Link 
                     href="/oferta" 
-                    className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation inline-block py-2 px-2 -mr-2 -my-2"
+                    className="text-sm min-[768px]:text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-none py-1.5 px-2 -mr-2"
                   >
                     Оферта
                   </Link>
                 </div>
-                <div className="h-[1.7rem] flex items-center justify-end">
+                <div className="h-[1.5rem] min-[768px]:h-[1.7rem] flex items-center justify-end">
                   <Link 
                     href="/privacy-policy" 
-                    className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation inline-block py-2 px-2 -mr-2 -my-2"
+                    className="text-sm min-[768px]:text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-none py-1.5 px-2 -mr-2"
                   >
                     Политика конфиденциальности
                   </Link>
