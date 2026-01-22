@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -91,7 +92,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      {/* Logo and Title - positioned absolutely above the card */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-[calc(50%+1.25rem)] -translate-y-[calc(50%+19rem)] flex items-center space-x-3">
+        <Image 
+          src="/logo.svg" 
+          alt="Трансформер" 
+          width={32} 
+          height={32}
+          className="object-contain"
+        />
+        <h1 className="text-[1.4625rem] font-semibold text-foreground">Трансформер</h1>
+      </div>
+      
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Вход</CardTitle>

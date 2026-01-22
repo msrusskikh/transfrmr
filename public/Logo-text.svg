@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1280 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="transformer-logo-reversed.svg" transform="matrix(1.27112,0,0,1.27112,313.372,375.433)">
+        <g transform="matrix(1,0,0,1,-48,-48)">
+            <path d="M56,6C56,2.689 53.311,0 50,0L6,0C2.689,0 0,2.689 0,6L0,50C0,53.311 2.689,56 6,56L50,56C53.311,56 56,53.311 56,50L56,6Z" style="fill:white;"/>
+            <path d="M96,46C96,42.689 93.311,40 90,40L46,40C42.689,40 40,42.689 40,46L40,90C40,93.311 42.689,96 46,96L90,96C93.311,96 96,93.311 96,90L96,46Z" style="fill:white;fill-opacity:0.3;"/>
+        </g>
+    </g>
+    <g transform="matrix(1.07804,0,0,1.07804,-467.312,-337.376)">
+        <text x="824px" y="684px" style="font-family:'Inter24pt-Regular', 'Inter 24pt';font-size:87.072px;fill:rgb(236,236,236);">Т<tspan x="871.83px 923.487px " y="684px 684px ">ра</tspan>нсформер</text>
+    </g>
+</svg>

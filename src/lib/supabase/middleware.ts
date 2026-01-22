@@ -2,6 +2,15 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  // #region agent log
+  const fs = await import('fs').catch(() => null);
+  const logPath = '/Users/maxrusskikh/Desktop/Трансформер/Dev/transfrmr/.cursor/debug.log';
+  try {
+    if (fs) {
+      fs.appendFileSync(logPath, JSON.stringify({location:'middleware.ts:4',message:'Middleware called',data:{pathname:request.nextUrl.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})+'\n');
+    }
+  } catch {}
+  // #endregion
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -43,9 +52,23 @@ export async function updateSession(request: NextRequest) {
   // need to sign in again.
 
   try {
+    // #region agent log
+    try {
+      if (fs) {
+        fs.appendFileSync(logPath, JSON.stringify({location:'middleware.ts:45',message:'About to call getUser',data:{pathname:request.nextUrl.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})+'\n');
+      }
+    } catch {}
+    // #endregion
     const {
       data: { user },
     } = await supabase.auth.getUser()
+    // #region agent log
+    try {
+      if (fs) {
+        fs.appendFileSync(logPath, JSON.stringify({location:'middleware.ts:49',message:'getUser completed',data:{hasUser:!!user,pathname:request.nextUrl.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'I'})+'\n');
+      }
+    } catch {}
+    // #endregion
 
     if (
       !user &&
@@ -59,7 +82,14 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/login'
       return NextResponse.redirect(url)
     }
-  } catch (error) {
+  } catch (error: any) {
+    // #region agent log
+    try {
+      if (fs) {
+        fs.appendFileSync(logPath, JSON.stringify({location:'middleware.ts:62',message:'Middleware error caught',data:{error:error?.message,pathname:request.nextUrl.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'J'})+'\n');
+      }
+    } catch {}
+    // #endregion
     // If there's an error with Supabase (e.g., network issues), log it and continue
     // This prevents the middleware from crashing the entire application
     console.error('[Supabase Middleware] Error checking user session:', error)

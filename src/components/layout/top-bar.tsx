@@ -2,6 +2,7 @@
 
 import { Search, Lock, Unlock, MessageSquare, Menu, X, LogOut, LogIn, User, Zap } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useCommandMenu } from "@/lib/command-menu"
 import { useProgressStore } from "@/lib/progress"
@@ -63,7 +64,14 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             <span className="sr-only hidden md:inline">{isMobileMenuOpen ? "Close menu" : "Open menu"}</span>
           </Button>
           
-          <Link href="/learn" className="hover:opacity-80 transition-opacity">
+          <Link href="/learn" className="hover:opacity-80 transition-opacity flex items-center space-x-2">
+            <Image 
+              src="/logo.svg" 
+              alt="Трансформер" 
+              width={24} 
+              height={24}
+              className="object-contain"
+            />
             <h1 className="text-lg font-semibold cursor-pointer text-foreground">Трансформер</h1>
           </Link>
         </div>

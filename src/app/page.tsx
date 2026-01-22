@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/card"
 import { useProgressStore } from "@/lib/progress"
@@ -192,6 +193,13 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="container flex h-14 items-center px-4 justify-between">
           <div className="flex items-center space-x-2">
+            <Image 
+              src="/logo.svg" 
+              alt="Трансформер" 
+              width={24} 
+              height={24}
+              className="object-contain"
+            />
             <h1 className="text-lg font-semibold text-foreground">Трансформер</h1>
           </div>
           {/* Authentication UI */}

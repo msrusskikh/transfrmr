@@ -12,6 +12,9 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error(error)
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'error.tsx:14',message:'Error boundary triggered',data:{message:error.message,stack:error.stack?.substring(0,200),digest:error.digest},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+    // #endregion
   }, [error])
 
   return (

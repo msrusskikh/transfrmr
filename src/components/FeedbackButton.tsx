@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Zap } from "lucide-react"
 import {
   Tooltip,
@@ -12,6 +13,12 @@ import { FeedbackDialog } from "./FeedbackDialog"
 
 export function FeedbackButton() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Only show feedback button on educational course pages (/learn routes)
+  if (!pathname.startsWith('/learn')) {
+    return null
+  }
 
   return (
     <TooltipProvider delayDuration={200}>
