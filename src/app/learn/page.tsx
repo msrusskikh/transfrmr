@@ -65,37 +65,44 @@ export default function LearnPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
+      <div className="container mx-auto px-4 min-[375px]:px-6 py-6 md:py-8">
+        <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
         {/* Banner for new learners */}
         {isNewLearner && firstLesson && (
           <Card className="bg-card/100 backdrop-blur-sm border-border/50">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Link href={`/learn/1/1`} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer" style={{ backgroundColor: '#8658EA' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6B4CE6'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#8658EA'}>
-                    <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
-                  </Link>
-                  <div>
-                    <div className="font-medium text-foreground">Начать обучение</div>
-                    <div className="text-sm text-muted-foreground">{firstLesson.title}</div>
-                  </div>
+            <CardContent className="p-4 md:p-4">
+              <Link 
+                href={`/learn/1/1`}
+                className="md:hidden flex items-center gap-3 touch-manipulation"
+              >
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#0d9488' }}>
+                  <Play className="h-5 w-5 text-white ml-0.5" fill="currentColor" />
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <div className="text-center">
+                <div className="flex-1 min-w-0">
+                  <div className="font-normal text-base text-foreground line-clamp-2">{firstLesson.title}</div>
+                </div>
+              </Link>
+              {/* Desktop layout */}
+              <Link 
+                href={`/learn/1/1`}
+                className="hidden md:flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                  style={{ backgroundColor: '#0d9488' }}
+                >
+                  <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-normal text-base text-foreground line-clamp-2">{firstLesson.title}</div>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground flex-shrink-0 pr-2">
+                  <div className="text-right">
                     <div className="font-medium text-foreground">Модуль 1</div>
                     <div>Урок 1</div>
                   </div>
-                  <div className="w-px h-8 bg-border"></div>
-                  <Button asChild variant="outline" size="sm" className="h-9 px-3 transition-all duration-200 hover:bg-accent/50">
-                    <Link href={`/learn/1/1`}>
-                      Продолжить
-                      <ArrowRight className="ml-1 h-3 w-3" />
-                      
-                    </Link>
-                  </Button>
                 </div>
-              </div>
+              </Link>
             </CardContent>
           </Card>
         )}
@@ -103,32 +110,39 @@ export default function LearnPage() {
         {/* Продолжить обучение - only show if user has progress and is not a new learner */}
         {nextLesson && !isNewLearner && (
           <Card className="bg-card/100 backdrop-blur-sm border-border/50">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Link href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`} className="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer" style={{ backgroundColor: '#8658EA' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6B4CE6'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#8658EA'}>
-                    <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
-                  </Link>
-                  <div>
-                    <div className="font-medium text-foreground">Продолжить обучение</div>
-                    <div className="text-sm text-muted-foreground">{nextLesson.section.title}</div>
-                  </div>
+            <CardContent className="p-4 md:p-4">
+              <Link 
+                href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`}
+                className="md:hidden flex items-center gap-3 touch-manipulation"
+              >
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#0d9488' }}>
+                  <Play className="h-5 w-5 text-white ml-0.5" fill="currentColor" />
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <div className="text-center">
+                <div className="flex-1 min-w-0">
+                  <div className="font-normal text-base text-foreground line-clamp-2">{nextLesson.section.title}</div>
+                </div>
+              </Link>
+              {/* Desktop layout */}
+              <Link 
+                href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`}
+                className="hidden md:flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                  style={{ backgroundColor: '#0d9488' }}
+                >
+                  <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-normal text-base text-foreground line-clamp-2">{nextLesson.section.title}</div>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground flex-shrink-0 pr-2">
+                  <div className="text-right">
                     <div className="font-medium text-foreground">Модуль {nextLesson.module.id}</div>
                     <div>Урок {nextLesson.section.section}</div>
                   </div>
-                  <div className="w-px h-8 bg-border"></div>
-                  <Button asChild variant="outline" size="sm" className="h-9 px-3 transition-all duration-200 hover:bg-accent/50">
-                    <Link href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`}>
-                      Продолжить
-                      <ArrowRight className="ml-1 h-3 w-3" />
-                      
-                    </Link>
-                  </Button>
                 </div>
-              </div>
+              </Link>
             </CardContent>
           </Card>
         )}
