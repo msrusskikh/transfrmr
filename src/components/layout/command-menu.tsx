@@ -216,9 +216,6 @@ export function CommandMenu() {
           {!query && (
             <div className="mt-8 text-center text-muted-foreground dark:text-muted-foreground/70">
               <p className="text-sm dark:text-foreground/60">Введите текст для поиска по урокам</p>
-              <p className="text-xs mt-2 dark:text-muted-foreground/50">
-                Используйте ↑↓ для навигации, Enter для выбора, Esc для закрытия
-              </p>
             </div>
           )}
         </div>

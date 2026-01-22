@@ -87,16 +87,16 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
                 )}
               >
                 <div className={cn(
-                  "w-2 h-2 rounded-full mt-1.5 flex-shrink-0 transition-colors",
+                  "w-2 h-2 rounded-full flex-shrink-0 transition-colors mt-1",
                   isCompleted 
                     ? "bg-foreground border-foreground border" 
                     : hasAccess 
                       ? "bg-background border border-muted-foreground/60 group-hover:border-foreground/60" 
                       : "bg-background border border-muted-foreground/30"
                 )}></div>
-                <span className="relative overflow-hidden max-w-[180px] -mt-0.5">
+                <span className="relative overflow-hidden max-w-[180px] flex-1">
                   <span className={cn(
-                    "text-xs font-medium leading-tight",
+                    "text-xs font-medium leading-tight block",
                     hasAccess ? "text-foreground" : "text-foreground/50"
                   )}>{section.title}</span>
                 </span>

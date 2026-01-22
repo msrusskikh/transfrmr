@@ -789,33 +789,27 @@
   .mobile-sidebar .flex.items-start.space-x-2 {
     margin-left: 0 !important;
     padding-left: 0 !important;
-  }
-  
-  /* Ensure consistent icon and text alignment */
-  .mobile-sidebar .flex.items-start.space-x-2 .flex-shrink-0 {
-    margin-top: 0.25rem;
-  }
-  
-  /* Fix mobile sidebar icon alignment */
-  .mobile-sidebar .flex.items-start.space-x-2 svg,
-  .mobile-sidebar .flex.items-start.space-x-2 .h-4 {
-    width: 16px !important;
-    height: 16px !important;
-    margin-top: 0.25rem !important;
-    flex-shrink: 0 !important;
-  }
-  
-  /* Ensure consistent vertical alignment for all lesson icons */
-  .mobile-sidebar .flex.items-start.space-x-2 {
     align-items: flex-start !important;
   }
   
+  /* Ensure consistent circle indicator alignment on mobile - align with first line of text */
   .mobile-sidebar .flex.items-start.space-x-2 .flex-shrink-0 {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 16px !important;
-    height: 16px !important;
+    flex-shrink: 0 !important;
+    width: 8px !important;
+    height: 8px !important;
+    margin-top: 4px !important; /* Aligns with text-xs first line baseline */
+  }
+  
+  /* Ensure text container takes full width and aligns properly on mobile */
+  .mobile-sidebar .flex.items-start.space-x-2 > span {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+  }
+  
+  /* Ensure text content aligns to first line */
+  .mobile-sidebar .flex.items-start.space-x-2 > span > span {
+    display: block !important;
+    line-height: 1.3 !important; /* leading-tight */
   }
   
   /* Ensure main content takes full width on mobile when sidebar is hidden */

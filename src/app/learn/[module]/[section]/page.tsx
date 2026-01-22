@@ -6,7 +6,6 @@ import { useProgressStore } from "@/lib/progress"
 import { modules, getLesson, lessonContentMap } from "@/lib/content"
 import { LessonPlayer } from "@/components/lesson/lesson-player"
 import { Button } from "@/components/ui/button"
-import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { ArrowLeft, ArrowRight, CheckCircle, Lock } from "lucide-react"
 import { useEffect, useState } from "react"
 import CourseCompletionPopup from "@/components/lesson/CourseCompletionPopup"
@@ -147,8 +146,6 @@ console.log(greet("Learner"));</code></pre>
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-lesson mx-auto">
-          <Breadcrumbs />
-          
           {/* Lesson Content */}
           <div className="mt-8">
             <LessonPlayer lesson={lesson} content={content} module={moduleId} section={sectionId} />

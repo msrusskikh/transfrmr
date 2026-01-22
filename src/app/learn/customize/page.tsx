@@ -339,9 +339,7 @@ export default function ColorCustomizePage() {
                         <CardHeader>
                           <div className="flex justify-between">
                             <div className="flex-1 min-w-0 text-left">
-                              <Link href={`/learn/${module.id}`} className="hover:opacity-80 transition-opacity">
-                                <CardTitle className="text-xl cursor-pointer text-left">{module.title}</CardTitle>
-                              </Link>
+                              <CardTitle className="text-xl text-left">{module.title}</CardTitle>
                               <p className="text-muted-foreground mt-1 text-left">{module.description}</p>
                             </div>
                             <div className="text-right flex-shrink-0 ml-4 self-start">
@@ -365,12 +363,14 @@ export default function ColorCustomizePage() {
                             <div className="text-sm text-muted-foreground">
                               {module.sections.length} уроков • ~{module.sections.reduce((acc, s) => acc + s.duration, 0)} мин
                             </div>
-                            <Button asChild variant="outline">
-                              <Link href={`/learn/${module.id}`}>
-                                Посмотреть уроки
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                              </Link>
-                            </Button>
+                            {module.sections.length > 0 && (
+                              <Button asChild variant="outline">
+                                <Link href={`/learn/${module.id}/${module.sections[0].section}`}>
+                                  Начать модуль
+                                  <ArrowRight className="ml-2 h-4 w-4" />
+                                </Link>
+                              </Button>
+                            )}
                           </div>
                         </CardContent>
                       </Card>

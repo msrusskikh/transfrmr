@@ -193,46 +193,44 @@ export default function LearnPage() {
                     {/* Lessons Dropdown */}
                     {isExpanded && (
                       <div className="pt-4 border-t border-border/50">
-                        <div className="relative pl-6">
-                          <div className="space-y-1">
-                            {module.sections.map((section) => {
-                              const isCompleted = completedSections.has(`${module.id}-${section.section}`)
-                              const isFirstSection = section.section === 1
-                              const hasAccessToPrevious = section.section > 1 && completedSections.has(`${module.id}-${section.section - 1}`)
-                              const hasAccess = isDevMode || isFirstSection || isCompleted || hasAccessToPrevious
-                              
-                              return (
-                                <Link
-                                  key={section.section}
-                                  href={`/learn/${module.id}/${section.section}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className={cn(
-                                    "relative flex items-center pl-4 py-2 transition-all duration-200 group",
-                                    !hasAccess && !isDevMode && "opacity-50 pointer-events-none",
-                                    hasAccess && "hover:text-foreground"
-                                  )}
-                                >
-                                  {/* Circular indicator */}
-                                  <div className={cn(
-                                    "absolute left-0 w-2 h-2 rounded-full z-10 transition-colors",
-                                    isCompleted 
-                                      ? "bg-foreground border-foreground border" 
-                                      : hasAccess 
-                                        ? "bg-background border border-muted-foreground/60 group-hover:border-foreground/60" 
-                                        : "bg-background border border-muted-foreground/30"
-                                  )}></div>
-                                  
-                                  {/* Lesson title */}
-                                  <span className={cn(
-                                    "text-sm leading-relaxed",
-                                    hasAccess ? "text-foreground/80 group-hover:text-foreground" : "text-muted-foreground"
-                                  )}>
-                                    {section.title}
-                                  </span>
-                                </Link>
-                              )
-                            })}
-                          </div>
+                        <div className="space-y-1">
+                          {module.sections.map((section) => {
+                            const isCompleted = completedSections.has(`${module.id}-${section.section}`)
+                            const isFirstSection = section.section === 1
+                            const hasAccessToPrevious = section.section > 1 && completedSections.has(`${module.id}-${section.section - 1}`)
+                            const hasAccess = isDevMode || isFirstSection || isCompleted || hasAccessToPrevious
+                            
+                            return (
+                              <Link
+                                key={section.section}
+                                href={`/learn/${module.id}/${section.section}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className={cn(
+                                  "flex items-center gap-3 py-2 transition-all duration-200 group",
+                                  !hasAccess && !isDevMode && "opacity-50 pointer-events-none",
+                                  hasAccess && "hover:text-foreground"
+                                )}
+                              >
+                                {/* Circular indicator */}
+                                <div className={cn(
+                                  "w-2 h-2 rounded-full flex-shrink-0 transition-colors mt-0.5",
+                                  isCompleted 
+                                    ? "bg-foreground border-foreground border" 
+                                    : hasAccess 
+                                      ? "bg-background border border-muted-foreground/60 group-hover:border-foreground/60" 
+                                      : "bg-background border border-muted-foreground/30"
+                                )}></div>
+                                
+                                {/* Lesson title */}
+                                <span className={cn(
+                                  "text-sm leading-relaxed flex-1",
+                                  hasAccess ? "text-foreground/80 group-hover:text-foreground" : "text-muted-foreground"
+                                )}>
+                                  {section.title}
+                                </span>
+                              </Link>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
