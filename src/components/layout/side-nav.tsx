@@ -125,19 +125,11 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
   
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set())
   
-  // Update expanded modules when pathname changes
+  // Collapse all modules when on /learn main page
   useEffect(() => {
     const currentModule = getCurrentModuleFromPath()
     
-    if (currentModule) {
-      // If we're on a specific module page, expand that module
-      setExpandedModules(prev => {
-        if (!prev.has(currentModule)) {
-          return new Set([currentModule])
-        }
-        return prev
-      })
-    } else {
+    if (!currentModule) {
       // If we're on /learn (main page), collapse all modules
       setExpandedModules(new Set())
     }
