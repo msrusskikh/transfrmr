@@ -46,7 +46,7 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between px-4">
+      <div className="container relative flex h-14 items-center justify-between px-4">
         <div className="flex items-center space-x-2">
           {/* Mobile menu button - only visible on mobile */}
           <Button
@@ -64,7 +64,8 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             <span className="sr-only hidden md:inline">{isMobileMenuOpen ? "Close menu" : "Open menu"}</span>
           </Button>
           
-          <Link href="/learn" className="hover:opacity-80 transition-opacity flex items-center space-x-2">
+          {/* Desktop: clickable link */}
+          <Link href="/learn" className="hidden md:flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <Image 
               src="/logo.svg" 
               alt="Трансформер" 
@@ -74,6 +75,20 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             />
             <h1 className="text-lg font-semibold cursor-pointer text-foreground">Трансформер</h1>
           </Link>
+        </div>
+        
+        {/* Mobile: centered, non-clickable, 25% smaller */}
+        <div className="absolute left-1/2 top-1/2 -translate-y-1/2 flex md:hidden items-center scale-90">
+          <h1 className="text-lg font-semibold text-foreground -translate-x-1/2 relative">
+            <Image 
+              src="/logo.svg" 
+              alt="Трансформер" 
+              width={24} 
+              height={24}
+              className="object-contain absolute right-full mr-2 top-1/2 -translate-y-1/2"
+            />
+            Трансформер
+          </h1>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -87,11 +102,11 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             <span className="sr-only hidden md:inline">Open command menu</span>
           </Button>
           
-          {/* Admin-only buttons */}
+          {/* Admin-only buttons - hidden on mobile */}
           {!authLoading && user && isAdminEmail(user.email) && (
             <>
               {/* Reviews Link */}
-              <Link href="/admin/reviews">
+              <Link href="/admin/reviews" className="hidden md:block">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -104,7 +119,7 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
               </Link>
               
               {/* Feedback Link */}
-              <Link href="/admin/feedback">
+              <Link href="/admin/feedback" className="hidden md:block">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -153,7 +168,7 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             </>
           )}
           
-          {/* Developer Mode Toggle - Admin only */}
+          {/* Developer Mode Toggle - Admin only - hidden on mobile */}
           {!authLoading && user && isAdminEmail(user.email) && (
             <Button
               variant="outline"
@@ -162,7 +177,7 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
                 console.log('Dev mode toggle clicked, current state:', isDevMode)
                 toggleDevMode()
               }}
-              className={`h-9 px-3 transition-all duration-200 ${
+              className={`hidden md:flex h-9 px-3 transition-all duration-200 ${
                 isDevMode 
                   ? 'bg-green-600 hover:bg-green-700 shadow-sm text-white border-green-600' 
                   : 'hover:bg-accent/50'
