@@ -77,19 +77,22 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
           </Link>
         </div>
         
-        {/* Mobile: centered, non-clickable, 25% smaller */}
-        <div className="absolute left-1/2 top-1/2 -translate-y-1/2 flex md:hidden items-center scale-90">
-          <h1 className="text-lg font-semibold text-foreground -translate-x-1/2 relative">
-            <Image 
-              src="/logo.svg" 
-              alt="Трансформер" 
-              width={24} 
-              height={24}
-              className="object-contain absolute right-full mr-2 top-1/2 -translate-y-1/2"
-            />
+        {/* Mobile: centered, clickable, 25% smaller */}
+        <Link 
+          href="/learn" 
+          className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 flex md:hidden items-center scale-90 hover:opacity-80 transition-opacity"
+        >
+          <Image 
+            src="/logo.svg" 
+            alt="Трансформер" 
+            width={24} 
+            height={24}
+            className="object-contain mr-2"
+          />
+          <h1 className="text-lg font-semibold text-foreground cursor-pointer">
             Трансформер
           </h1>
-        </div>
+        </Link>
         
         <div className="flex items-center space-x-2">
           <Button

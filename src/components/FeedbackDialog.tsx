@@ -116,7 +116,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 disabled={isSubmitting}
-                className="min-h-[120px] md:min-h-[140px] resize-none text-sm leading-relaxed transition-all focus:ring-2 focus:ring-[#E6CC93]/50 border-border/50"
+                className="min-h-[120px] md:min-h-[140px] resize-none text-sm leading-relaxed border-border/50 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:ring-0"
                 required
               />
             </div>
@@ -136,7 +136,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
                 variant="outline"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="w-full sm:w-auto sm:min-w-[100px] order-2 sm:order-1"
+                className="w-full sm:w-auto sm:min-w-[120px] order-2 sm:order-1"
               >
                 Отмена
               </Button>

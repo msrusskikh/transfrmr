@@ -304,12 +304,12 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
     }
     .btn-primary:hover {
       background: #0a7c6f !important;
-      transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
     }
     .btn-secondary:hover {
       background: ${isDark ? '#4b5563' : '#f7f7f8'} !important;
       border-color: ${isDark ? '#6b7280' : '#d0d0d0'} !important;
+      border-width: 1px !important;
     }
     .close-btn:hover {
       background: ${isDark ? '#374151' : '#f0f0f0'} !important;
@@ -501,13 +501,7 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
                           border: 'none',
                           cursor: 'pointer',
                           fontSize: '24px',
-                          transition: 'transform 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'scale(1.1)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'scale(1)';
+                          transition: 'color 0.2s ease'
                         }}
                       >
                         <Star

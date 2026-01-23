@@ -178,7 +178,7 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-4 border-b border-border/50 flex-shrink-0">
-          <h2 className="text-lg font-semibold text-foreground">Содержание</h2>
+          <h2 className="text-lg font-semibold text-foreground pl-[7px]">Содержание</h2>
         </div>
         
         <ScrollArea className="flex-1 min-h-0 px-4">

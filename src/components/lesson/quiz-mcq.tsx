@@ -66,30 +66,30 @@ export function QuizMCQ({ quiz, module, section, quizIndex, onComplete }: QuizMC
             key={index}
             variant="outline"
             className={cn(
-              "w-full justify-start h-auto p-4 text-left",
+              "w-full justify-start h-auto min-h-[44px] p-4 text-left whitespace-normal",
               getChoiceStyle(choice)
             )}
             onClick={() => handleAnswerSelect(choice)}
             disabled={isAnswered}
           >
-            <div className="flex items-center space-x-3">
+            <div className="flex items-start gap-3 w-full">
               {isAnswered && choice === quiz.answer && (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                   <circle cx="12" cy="12" r="10" />
                   <path d="m9 12 2 2 4-4" stroke="#22c55e" strokeWidth="2" fill="none"/>
                 </svg>
               )}
               {isAnswered && choice === selectedAnswer && choice !== quiz.answer && (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                   <circle cx="12" cy="12" r="10" />
                   <path d="m15 9-6 6" stroke="#ef4444" strokeWidth="2" fill="none"/>
                   <path d="m9 9 6 6" stroke="#ef4444" strokeWidth="2" fill="none"/>
                 </svg>
               )}
-              <span className="font-mono text-sm text-muted-foreground w-6">
+              <span className="font-mono text-sm text-muted-foreground w-6 flex-shrink-0">
                 {String.fromCharCode(65 + index)}
               </span>
-              <span>{choice}</span>
+              <span className="flex-1 break-words">{choice}</span>
             </div>
           </Button>
         ))}

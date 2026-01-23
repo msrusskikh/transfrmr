@@ -118,7 +118,13 @@ export default function LessonPage() {
     const customContent = lessonContentMap[contentKey]
     console.log('Custom content found:', !!customContent)
     
-    content = customContent || `
+    // Use customContent if it exists and is not empty, otherwise use lesson.content, or fall back to welcome message
+    if (customContent && customContent.trim() !== '') {
+      content = customContent
+    } else if (lesson.content && lesson.content.trim() !== '') {
+      content = lesson.content
+    } else {
+      content = `
       <h2>Welcome to ${lesson.title}</h2>
       <p>This is a sample lesson content. In a real application, this would be loaded from MDX files with rich formatting, code examples, and interactive elements.</p>
       
@@ -140,6 +146,7 @@ console.log(greet("Learner"));</code></pre>
       <h3>Next Steps</h3>
       <p>After completing this lesson, you'll be ready to move on to more advanced topics. Make sure to complete the quiz below to reinforce your understanding.</p>
     `
+    }
   }
 
   return (

@@ -287,7 +287,7 @@ export default function HomePage() {
             
             <div className="flex items-center justify-center space-x-5 pt-6">
               {!authLoading && user ? (
-                <Button asChild size="lg" className="min-h-[44px] hover:scale-105 active:scale-100 transition-transform duration-200 shadow-sm px-6 min-[768px]:px-8 touch-manipulation">
+                <Button asChild size="lg" className="min-h-[44px] shadow-sm px-6 min-[768px]:px-8 touch-manipulation">
                   <Link href={getContinueDestination()}>
                     Продолжить обучение
                   </Link>
@@ -295,7 +295,7 @@ export default function HomePage() {
               ) : (
                 <Button 
                   size="lg" 
-                  className="min-h-[44px] hover:scale-105 active:scale-100 transition-transform duration-200 shadow-sm px-6 min-[768px]:px-8 touch-manipulation"
+                  className="min-h-[44px] shadow-sm px-6 min-[768px]:px-8 touch-manipulation"
                   onClick={() => {
                     const pricingSection = document.getElementById('pricing-section')
                     if (pricingSection) {
@@ -539,7 +539,7 @@ export default function HomePage() {
                   <div className="pt-2">
                     <Button 
                       size="lg" 
-                      className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white hover:scale-105 active:scale-100 transition-transform duration-200 shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation"
+                      className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation"
                       onClick={() => {
                         // TODO: Add purchase logic here
                         alert('Функция покупки будет добавлена позже')

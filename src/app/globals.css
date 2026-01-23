@@ -353,11 +353,25 @@
   }
   
   .dark button:not([disabled]) {
-    @apply transition-all duration-200;
+    @apply transition-colors duration-200;
   }
   
-  .dark button:not([disabled]):hover {
-    @apply transform scale-[1.02];
+  /* Prevent all scale transforms on hover globally - buttons, links, and interactive elements */
+  button:hover,
+  a:hover,
+  [role="button"]:hover,
+  button:focus,
+  a:focus,
+  [role="button"]:focus {
+    transform: scale(1) !important;
+  }
+  
+  /* Override any scale classes on hover */
+  .hover\:scale-100:hover,
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .hover\:scale-\[1\.02\]:hover {
+    transform: scale(1) !important;
   }
   
   /* Elegant card shadows for dark mode */

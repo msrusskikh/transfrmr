@@ -836,8 +836,8 @@ export const modules: Module[] = [
         section: 13,
         content: `
          
-          <div class="bg-purple-50 dark:bg-purple-950/20 border-l-4 border-purple-500 p-4 rounded-r-lg mb-6">
-            <p class="text-sm text-purple-800 dark:text-purple-200"><strong>Совет:</strong> Помните о модели «Роль → Цель → Шаги → Ограничения → Критерий качества» при анализе вопросов.</p>
+          <div class="bg-gray-50 dark:bg-gray-950/20 border-l-4 border-gray-500 p-4 rounded-r-lg mb-6">
+            <p class="text-sm text-gray-800 dark:text-gray-200"><strong>Совет:</strong> Помните о модели «Роль → Цель → Шаги → Ограничения → Критерий качества» при анализе вопросов.</p>
           </div>
         `,
         quiz: [
@@ -1274,8 +1274,8 @@ export const modules: Module[] = [
           <h2>Проверьте свои знания</h2>
           <p>Этот тест поможет закрепить ключевые навыки работы с ИИ-инструментами и процессами из модуля 3. Внимательно прочитайте каждый вопрос и выберите наиболее точный ответ.</p>
           
-          <div class="bg-orange-50 dark:bg-orange-950/20 border-l-4 border-orange-500 p-4 rounded-r-lg mb-6">
-            <p class="text-sm text-orange-800 dark:text-orange-200"><strong>Совет:</strong> Помните о принципах выбора инструментов и построения рабочих процессов с ИИ при анализе вопросов.</p>
+          <div class="bg-gray-50 dark:bg-gray-950/20 border-l-4 border-gray-500 p-4 rounded-r-lg mb-6">
+            <p class="text-sm text-gray-800 dark:text-gray-200"><strong>Совет:</strong> Помните о принципах выбора инструментов и построения рабочих процессов с ИИ при анализе вопросов.</p>
           </div>
         `,
         quiz: [
@@ -2297,9 +2297,7 @@ export const lessonContentMap: Record<string, string> = {
     </div>
   `,
   
-  "2-13": `
-    <p>This lesson content has been moved to lesson 14.</p>
-  `,
+  "2-13": ``,
   
   "2-14": `
     <h2>Ключевые выводы</h2>
@@ -2474,8 +2472,8 @@ export const lessonContentMap: Record<string, string> = {
     <h2>Проверьте свои знания</h2>
     <p>Этот тест поможет закрепить ключевые навыки работы с ИИ-инструментами и процессами из модуля 3. Внимательно прочитайте каждый вопрос и выберите наиболее точный ответ.</p>
     
-    <div class="bg-orange-50 dark:bg-orange-950/20 border-l-4 border-orange-500 p-4 rounded-r-lg mb-6">
-      <p class="text-sm text-orange-800 dark:text-orange-200"><strong>Совет:</strong> Помните о принципах выбора инструментов и построения рабочих процессов с ИИ при анализе вопросов.</p>
+    <div class="bg-gray-50 dark:bg-gray-950/20 border-l-4 border-gray-500 p-4 rounded-r-lg mb-6">
+      <p class="text-sm text-gray-800 dark:text-gray-200"><strong>Совет:</strong> Помните о принципах выбора инструментов и построения рабочих процессов с ИИ при анализе вопросов.</p>
     </div>
   `,
   
