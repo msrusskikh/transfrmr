@@ -178,13 +178,7 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-4 border-b border-border/50 flex-shrink-0">
-          <Link 
-            href="/learn" 
-            className="hover:opacity-80 transition-opacity"
-            onClick={onMobileMenuClose}
-          >
-            <h2 className="text-lg font-semibold cursor-pointer text-foreground">Содержание</h2>
-          </Link>
+          <h2 className="text-lg font-semibold text-foreground">Содержание</h2>
         </div>
         
         <ScrollArea className="flex-1 min-h-0 px-4">
@@ -205,13 +199,11 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
         <div className="p-4 border-t border-border/50 flex-shrink-0 flex justify-center">
           <Button
             onClick={handleFeedbackClick}
-            className="w-auto px-4 py-2 rounded-2xl justify-center gap-2 bg-[#E6CC93] hover:bg-[#E6CC93]/90 font-normal transition-none"
-            variant="default"
-            style={{ color: '#000000', transform: 'scale(1)' }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            variant="outline"
+            size="sm"
+            className="h-9 px-3 transition-all duration-200 hover:bg-accent/50"
           >
-            <span style={{ color: '#000000' }}>Есть проблема или идея?</span>
+            <span className="text-xs">Есть проблема или идея?</span>
           </Button>
         </div>
       </div>

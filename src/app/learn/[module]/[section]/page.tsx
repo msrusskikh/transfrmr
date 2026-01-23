@@ -144,10 +144,10 @@ console.log(greet("Learner"));</code></pre>
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 pt-4 pb-8 md:py-8">
         <div className="max-w-lesson mx-auto">
           {/* Lesson Content */}
-          <div className="mt-8">
+          <div className="mt-2 md:mt-4">
             <LessonPlayer lesson={lesson} content={content} module={moduleId} section={sectionId} />
           </div>
           
