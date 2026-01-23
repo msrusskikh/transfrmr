@@ -9,6 +9,7 @@ import { useProgressStore } from "@/lib/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { modules } from "@/lib/content"
+import { FeedbackDialog } from "@/components/FeedbackDialog"
 
 interface ModuleItemProps {
   module: typeof modules[0]
@@ -116,6 +117,7 @@ interface SideNavProps {
 
 export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
   const pathname = usePathname()
+  const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false)
   
   // Extract current module from pathname
   const getCurrentModuleFromPath = () => {
@@ -147,6 +149,14 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
     })
   }
 
+  const handleFeedbackClick = () => {
+    setIsFeedbackDialogOpen(true)
+    // Optionally close mobile menu when opening feedback
+    if (onMobileMenuClose) {
+      onMobileMenuClose()
+    }
+  }
+
   return (
     <>
       {/* Mobile overlay */}
@@ -159,13 +169,15 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
       
       {/* Sidebar */}
       <div className={`
-        flex h-full w-72 flex-col border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80
+        flex w-72 flex-col border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80
         fixed md:relative z-50 md:z-auto
+        h-[calc(100vh-3.5rem)] md:h-full
+        top-14 md:top-0
         transform transition-transform duration-300 ease-in-out
         max-w-full overflow-x-hidden mobile-sidebar
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-4 border-b border-border/50">
+        <div className="p-4 border-b border-border/50 flex-shrink-0">
           <Link 
             href="/learn" 
             className="hover:opacity-80 transition-opacity"
@@ -175,7 +187,7 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
           </Link>
         </div>
         
-        <ScrollArea className="flex-1 px-4">
+        <ScrollArea className="flex-1 min-h-0 px-4">
           <div className="space-y-4 py-4">
             {modules.map((module) => (
               <ModuleItem
@@ -189,8 +201,21 @@ export function SideNav({ isMobileMenuOpen, onMobileMenuClose }: SideNavProps) {
           </div>
         </ScrollArea>
         
-       
+        {/* Feedback Button */}
+        <div className="p-4 border-t border-border/50 flex-shrink-0 flex justify-center">
+          <Button
+            onClick={handleFeedbackClick}
+            className="w-auto px-4 py-2 rounded-2xl justify-center gap-2 bg-[#E6CC93] hover:bg-[#E6CC93]/90 font-normal transition-none"
+            variant="default"
+            style={{ color: '#000000', transform: 'scale(1)' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <span style={{ color: '#000000' }}>Есть проблема или идея?</span>
+          </Button>
+        </div>
       </div>
+      <FeedbackDialog open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
     </>
   )
 }

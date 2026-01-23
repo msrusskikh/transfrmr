@@ -26,7 +26,7 @@ export function FeedbackButton() {
         <TooltipTrigger asChild>
           <button
             onClick={() => setIsDialogOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#E6CC93] shadow-lg transition-all hover:scale-110 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#E6CC93] focus:ring-offset-2 focus:ring-offset-background"
+            className="hidden md:flex fixed bottom-6 right-6 z-50 h-12 w-12 items-center justify-center rounded-full bg-[#E6CC93] shadow-lg transition-all hover:scale-110 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#E6CC93] focus:ring-offset-2 focus:ring-offset-background"
             aria-label="Есть проблема или идея?"
           >
             <Zap className="h-5 w-5 text-gray-600" />

@@ -6,16 +6,13 @@ import { Zap, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 import { useAuth } from "@/contexts/AuthContext"
-import { getLesson, getModule } from "@/lib/content"
 
 interface FeedbackDialogProps {
   open: boolean
@@ -28,46 +25,6 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const pathname = usePathname()
   const { user } = useAuth()
-
-  // Get page/lesson name from pathname
-  const getPageName = () => {
-    if (!pathname) return null
-    
-    // Check for exact /learn page first
-    if (pathname === '/learn') {
-      return "Главная страница"
-    }
-    
-    if (pathname.startsWith('/learn/')) {
-      const pathParts = pathname.split('/').filter(Boolean)
-      if (pathParts.length >= 3) {
-        // Lesson page: /learn/[module]/[section]
-        const moduleId = parseInt(pathParts[1])
-        const sectionId = parseInt(pathParts[2])
-        const lesson = getLesson(moduleId, sectionId)
-        return lesson?.title || null
-      } else if (pathParts.length === 2) {
-        // Module page: /learn/[module]
-        const moduleId = parseInt(pathParts[1])
-        const module = getModule(moduleId)
-        return module?.title || null
-      }
-    }
-    
-    // For other pages, return a friendly name
-    const pageNames: Record<string, string> = {
-      '/': 'Главная',
-      '/login': 'Вход',
-      '/signup': 'Регистрация',
-      '/pitch': 'О курсе',
-      '/privacy-policy': 'Политика конфиденциальности',
-      '/oferta': 'Оферта',
-    }
-    
-    return pageNames[pathname] || pathname
-  }
-
-  const pageName = getPageName()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -126,25 +83,18 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[540px]">
-        <DialogHeader className="space-y-3 pb-2">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6CC93]/20">
-              <Zap className="h-5 w-5 text-[#E6CC93]" />
-            </div>
-            <div className="flex-1">
-              <DialogTitle className="text-xl font-semibold tracking-tight">
-                Есть проблема или идея?
-              </DialogTitle>
-            </div>
+      <DialogContent className="sm:max-w-[540px] max-w-[calc(100vw-2rem)] w-[calc(100vw-2rem)] sm:w-full p-0 gap-0 rounded-xl">
+        <DialogHeader className="px-6 pt-6 pb-4 space-y-0">
+          <div className="relative flex items-center mb-3">
+            <Zap className="h-5 w-5 text-[#E6CC93] absolute left-0" />
+            <DialogTitle className="text-xl font-normal tracking-tight text-center w-full">
+              Есть проблема или идея?
+            </DialogTitle>
           </div>
-          <DialogDescription className="text-base leading-relaxed text-muted-foreground">
-            Поделитесь своим опытом. Ваш отзыв поможет нам улучшить курс.
-          </DialogDescription>
         </DialogHeader>
         
         {submitStatus === "success" ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <div className="flex flex-col items-center justify-center py-12 px-6 space-y-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 dark:bg-green-500/20">
               <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
             </div>
@@ -158,54 +108,43 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-3">
-              <Label 
-                htmlFor="feedback-message" 
-                className="text-sm font-medium text-foreground"
-              >
-                Ваше сообщение
-              </Label>
+          <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-6">
+            <div className="space-y-2">
               <Textarea
                 id="feedback-message"
-                placeholder="Опишите проблему или поделитесь идеей..."
+                placeholder="Опишите проблему или поделитесь идеей"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 disabled={isSubmitting}
-                className="min-h-[140px] resize-none text-base leading-relaxed transition-all focus:ring-2 focus:ring-[#E6CC93]/50"
+                className="min-h-[120px] md:min-h-[140px] resize-none text-sm leading-relaxed transition-all focus:ring-2 focus:ring-[#E6CC93]/50 border-border/50"
                 required
               />
-              {pageName && (
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <span className="h-1 w-1 rounded-full bg-muted-foreground/40"></span>
-                  {pageName}
-                </div>
-              )}
             </div>
 
             {submitStatus === "error" && (
-              <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 dark:bg-red-500/5 px-4 py-3">
-                <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-                <p className="text-sm text-red-600 dark:text-red-400">
+              <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 dark:bg-red-500/5 px-4 py-3">
+                <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-600 dark:text-red-400 leading-relaxed">
                   Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз.
                 </p>
               </div>
             )}
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-3 px-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="min-w-[100px]"
+                className="w-full sm:w-auto sm:min-w-[100px] order-2 sm:order-1"
               >
                 Отмена
               </Button>
               <Button 
                 type="submit" 
                 disabled={isSubmitting || !message.trim()}
-                className="min-w-[120px] bg-[#E6CC93] hover:bg-[#E6CC93]/90 text-gray-900 font-medium"
+                className="w-full sm:w-auto sm:min-w-[120px] bg-[#E6CC93] hover:bg-[#E6CC93]/90 text-black font-medium order-1 sm:order-2"
+                style={{ color: '#000000' }}
               >
                 {isSubmitting ? (
                   <>
