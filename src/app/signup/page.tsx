@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,7 +18,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { CheckCircle2, Mail } from 'lucide-react'
-import type { SupabaseClient } from '@supabase/supabase-js'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -28,85 +27,46 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const router = useRouter()
-  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
-
-  // Defer client creation to client-side only
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !supabaseRef.current) {
-      supabaseRef.current = createClient()
-      
-      // Check if Supabase is not configured
-      if (!isSupabaseConfigured()) {
-        setError('Supabase не настроен. Пожалуйста, настройте переменные окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
-      }
-    }
-  }, [])
+  const { register } = useAuth()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
-    // Check if Supabase is configured before attempting signup
-    if (!isSupabaseConfigured()) {
-      setError('Supabase не настроен. Пожалуйста, настройте переменные окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
-      return
-    }
-
-    if (!supabaseRef.current) {
-      setError('Supabase client не инициализирован. Пожалуйста, обновите страницу.')
-      return
-    }
 
     if (password !== confirmPassword) {
       setError('Пароли не совпадают')
       return
     }
 
-    if (password.length < 6) {
-      setError('Пароль должен содержать минимум 6 символов')
+    if (password.length < 8) {
+      setError('Пароль должен содержать минимум 8 символов')
+      return
+    }
+
+    // Check password requirements
+    if (!/[A-Z]/.test(password)) {
+      setError('Пароль должен содержать хотя бы одну заглавную букву')
+      return
+    }
+
+    if (!/[0-9]/.test(password)) {
+      setError('Пароль должен содержать хотя бы одну цифру')
       return
     }
 
     setLoading(true)
 
     try {
-      const { data, error } = await supabaseRef.current.auth.signUp({
-        email,
-        password,
-      })
+      const result = await register(email, password)
 
-      if (error) {
-        // Provide more helpful error messages
-        if (error.message.includes('Invalid API key') || 
-            error.message.includes('JWT') || 
-            error.message.includes('Failed to fetch') || 
-            error.message.includes('Load failed') ||
-            error.message.includes('NetworkError') ||
-            error.message.includes('fetch')) {
-          setError('Supabase не настроен или недоступен. Проверьте настройки переменных окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
-        } else if (error.message.includes('email')) {
-          setError('Этот email уже зарегистрирован или неверный формат.')
-        } else {
-          setError(error.message || 'Произошла ошибка при регистрации')
-        }
-        return
-      }
-
-      // Show success dialog with email confirmation instructions
-      setShowSuccessDialog(true)
-    } catch (error: any) {
-      // Handle network errors or placeholder client errors
-      if (error.message?.includes('Missing Supabase') || 
-          error.message?.includes('Failed to fetch') || 
-          error.message?.includes('Load failed') ||
-          error.message?.includes('NetworkError') ||
-          error.message?.includes('fetch') ||
-          error.name === 'TypeError' ||
-          (error.message && typeof error.message === 'string' && error.message.toLowerCase().includes('load'))) {
-        setError('Supabase не настроен или недоступен. Проверьте настройки переменных окружения NEXT_PUBLIC_SUPABASE_URL и NEXT_PUBLIC_SUPABASE_ANON_KEY на Vercel.')
+      if (result.success) {
+        // Show success dialog with email confirmation instructions
+        setShowSuccessDialog(true)
       } else {
-        setError(error.message || 'Произошла ошибка при регистрации')
+        setError(result.error || 'Произошла ошибка при регистрации')
       }
+    } catch (error: any) {
+      setError(error.message || 'Произошла ошибка при регистрации')
     } finally {
       setLoading(false)
     }
@@ -157,8 +117,11 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                minLength={6}
+                minLength={8}
               />
+              <p className="text-xs text-muted-foreground-override">
+                Минимум 8 символов, 1 заглавная буква, 1 цифра
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
@@ -170,7 +133,7 @@ export default function SignupPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
-                minLength={6}
+                minLength={8}
               />
             </div>
             {error && (
@@ -256,4 +219,3 @@ export default function SignupPage() {
     </div>
   )
 }
-

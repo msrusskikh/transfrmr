@@ -180,10 +180,6 @@ export default function FontsPage() {
 
           {/* Footer */}
           <div className="text-center pt-8">
-            <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground/60 font-mono tracking-wide">
-              <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
-              <span>Powered by OpenAI</span>
-            </div>
           </div>
         </div>
       </div>

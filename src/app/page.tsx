@@ -35,6 +35,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CookieBanner } from "@/components/CookieBanner"
 
 // Course Module Card Component
 function CourseModuleCard({ module }: { module: { title: string; description: string; icon: React.ComponentType<{ className?: string }> } }) {
@@ -118,6 +120,7 @@ export default function HomePage() {
   const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
   const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   
   // Force dark theme on mount
   useEffect(() => {
@@ -535,21 +538,72 @@ export default function HomePage() {
                     </div>
                   </div>
 
+                  {/* Terms Agreement Checkbox */}
+                  <div className="pt-2">
+                    <label className="flex items-start gap-2 cursor-pointer touch-manipulation group">
+                      <Checkbox
+                        checked={agreedToTerms}
+                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                        variant="minimal"
+                        className="mt-[0px]"
+                      />
+                      <span className="text-xs leading-[1.5] flex-1 text-left">
+                        <span style={{ color: 'hsl(var(--foreground) / 0.6)' }}>
+                          Принимаю условия{" "}
+                        </span>
+                        <Link 
+                          href="/privacy-policy" 
+                          className="transition-colors inline"
+                          style={{ 
+                            color: 'hsl(var(--primary))',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = 'hsl(var(--primary) / 0.8)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = 'hsl(var(--primary))'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          политики конфиденциальности
+                        </Link>
+                        <span style={{ color: 'hsl(var(--foreground) / 0.6)' }}>
+                          {" "}и{" "}
+                        </span>
+                        <Link 
+                          href="/oferta" 
+                          className="transition-colors inline"
+                          style={{ 
+                            color: 'hsl(var(--primary))',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = 'hsl(var(--primary) / 0.8)'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = 'hsl(var(--primary))'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          оферты
+                        </Link>
+                      </span>
+                    </label>
+                  </div>
+
                   {/* Purchase Button */}
                   <div className="pt-2">
                     <Button 
                       size="lg" 
-                      className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation"
+                      className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-teal-600"
                       onClick={() => {
                         // TODO: Add purchase logic here
                         alert('Функция покупки будет добавлена позже')
                       }}
+                      disabled={!agreedToTerms}
                     >
                       Купить курс
                     </Button>
-                    <p className="text-sm text-muted-foreground/70 mt-3">
-                      Безопасная оплата • Мгновенный доступ
-                    </p>
+                    <div className="mt-3"></div>
                   </div>
                 </div>
               </div>
@@ -559,46 +613,50 @@ export default function HomePage() {
       </main>
 
       {/* Footer with OpenAI Brand Reference - Now at the very bottom */}
-      <footer className="mt-auto py-6 min-[768px]:py-8 border-t border-border/30" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
+      <footer className="mt-auto py-6 min-[768px]:pt-6 min-[768px]:pb-8 border-t border-border/30" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
         <div className="container mx-auto px-4 min-[375px]:px-6">
           {/* Mobile: Single column with consistent spacing */}
           <div className="footer-mobile-container">
-            <p className="footer-mobile-item text-sm text-foreground" style={{ marginBottom: '0.5rem' }}>Русских М.С.</p>
-            <p className="footer-mobile-item text-sm text-muted-foreground" style={{ marginBottom: '0.5rem', whiteSpace: 'nowrap' }}>
-              <span style={{ marginRight: '0.25rem' }}>ИНН</span>770475475401
+            <p className="footer-mobile-item text-xs text-muted-foreground/60 footer-disclaimer-text" style={{ marginBottom: '0.5rem', opacity: '0.8' }}>Русских М.С.</p>
+            <p className="footer-mobile-item text-xs text-muted-foreground/60 footer-disclaimer-text" style={{ marginBottom: '0.5rem', whiteSpace: 'nowrap', opacity: '0.8' }}>
+              <span className="footer-disclaimer-text" style={{ marginRight: '0.25rem', color: 'hsl(var(--muted-foreground) / 0.8)', opacity: '0.8' }}>ИНН</span>770475475401
             </p>
             <a 
               href="mailto:hi@transfrmr.ai" 
-              className="footer-mobile-item text-sm text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation block"
-              style={{ marginBottom: '0.5rem' }}
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               hi@transfrmr.ai
             </a>
             <Link 
               href="/oferta" 
-              className="footer-mobile-item text-sm text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation block"
-              style={{ marginBottom: '0.5rem' }}
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               Оферта
             </Link>
             <Link 
               href="/privacy-policy" 
-              className="footer-mobile-item text-sm text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation block"
-              style={{ marginBottom: '0' }}
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               Политика конфиденциальности
             </Link>
+            <p className="footer-mobile-item text-xs text-muted-foreground/60 footer-disclaimer-text" style={{ marginBottom: '0', opacity: '0.8' }}>
+              Трансформер – услуги по предоставлению доступа к информационным материалам. 18+
+            </p>
           </div>
 
           {/* Desktop: Two columns side by side */}
           <div className="footer-desktop-container">
             {/* Contact Information - Left */}
             <div className="flex flex-col space-y-1.5">
-              <p className="text-base text-foreground leading-relaxed">Русских М.С.</p>
-              <p className="text-base text-muted-foreground leading-relaxed">ИНН 770475475401</p>
+              <p className="text-sm text-muted-foreground/60 leading-relaxed footer-disclaimer-text" style={{ opacity: '0.8' }}>Русских М.С.</p>
+              <p className="text-sm text-muted-foreground/60 leading-relaxed footer-disclaimer-text" style={{ opacity: '0.8' }}>ИНН 770475475401</p>
               <a 
                 href="mailto:hi@transfrmr.ai" 
-                className="text-base text-primary hover:text-primary/80 active:text-primary/70 transition-colors touch-manipulation leading-relaxed inline-block"
+                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                style={{ opacity: '0.8' }}
               >
                 hi@transfrmr.ai
               </a>
@@ -608,20 +666,28 @@ export default function HomePage() {
             <div className="flex flex-col space-y-1.5 items-end text-right">
               <Link 
                 href="/oferta" 
-                className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-relaxed inline-block"
+                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                style={{ opacity: '0.8' }}
               >
                 Оферта
               </Link>
               <Link 
                 href="/privacy-policy" 
-                className="text-base text-muted-foreground hover:text-foreground active:text-foreground/80 transition-colors touch-manipulation leading-relaxed inline-block"
+                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                style={{ opacity: '0.8' }}
               >
                 Политика конфиденциальности
               </Link>
+              <p className="text-sm text-muted-foreground/60 leading-relaxed text-right footer-disclaimer-text" style={{ opacity: '0.8' }}>
+                Трансформер – услуги по предоставлению доступа к информационным материалам. 18+
+              </p>
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Cookie Consent Banner */}
+      <CookieBanner />
     </div>
   )
 }

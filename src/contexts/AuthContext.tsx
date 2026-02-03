@@ -1,12 +1,10 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { createContext, useContext, useEffect } from 'react'
+import { useAuth as useAuthStore } from '@/hooks/useAuth'
 
 interface AuthContextType {
-  user: User | null
+  user: { id: string; email: string } | null
   loading: boolean
   signOut: () => Promise<void>
 }
@@ -14,57 +12,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const supabaseRef = useRef<SupabaseClient | null>(null)
+  const { user, isLoading, logout, checkAuth } = useAuthStore()
 
-  // Only create client client-side, not during SSR/static generation
+  // Check auth on mount
   useEffect(() => {
-    // Create client only on client-side
-    if (typeof window !== 'undefined' && !supabaseRef.current) {
-      try {
-        supabaseRef.current = createClient()
-      } catch (error) {
-        console.error('[AuthContext] Failed to create Supabase client:', error)
-        setLoading(false)
-        return
-      }
-    }
-    
-    const supabase = supabaseRef.current
-    if (!supabase) {
-      setLoading(false)
-      return
-    }
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }).catch((error) => {
-      console.error('[AuthContext] Failed to get session:', error)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
+    checkAuth()
+  }, [checkAuth])
 
   const signOut = async () => {
-    if (supabaseRef.current) {
-      await supabaseRef.current.auth.signOut()
-    }
+    await logout()
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ user, loading: isLoading, signOut }}>
       {children}
     </AuthContext.Provider>
   )
@@ -77,4 +37,3 @@ export function useAuth() {
   }
   return context
 }
-

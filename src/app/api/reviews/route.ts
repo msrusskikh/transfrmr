@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeFile, readFile, mkdir } from 'fs/promises'
 import { join } from 'path'
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/auth/get-current-user'
 import { ADMIN_EMAIL } from '@/lib/admin'
 
 interface ReviewData {
@@ -42,10 +42,9 @@ async function saveReviews(reviews: ReviewData[]) {
 // Check if the current user is an admin
 async function checkAdminAccess(): Promise<{ authorized: boolean; userEmail?: string }> {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     
-    if (error || !user || !user.email) {
+    if (!user || !user.email) {
       return { authorized: false }
     }
     

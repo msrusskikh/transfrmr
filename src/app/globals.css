@@ -553,6 +553,10 @@
 
 @layer utilities {
   /* Ultra-wide screen support */
+  .text-muted-foreground-override {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
   .container-ultra-wide {
     max-width: 1920px;
     margin: 0 auto;
@@ -964,4 +968,17 @@
     justify-content: space-between;
     align-items: flex-start;
   }
+}
+
+/* More muted text for footer disclaimer */
+.footer-disclaimer-text {
+  color: hsl(var(--muted-foreground) / 0.8) !important;
+  opacity: 0.8 !important;
+}
+
+.footer-disclaimer-text span,
+.footer-disclaimer-text p,
+.footer-disclaimer-text div {
+  color: hsl(var(--muted-foreground) / 0.8) !important;
+  opacity: 0.8 !important;
 }
