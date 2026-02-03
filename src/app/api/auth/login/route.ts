@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           success: false, 
-          error: validationResult.error.errors[0]?.message || 'Неверные данные' 
+          error: validationResult.error.issues[0]?.message || 'Неверные данные' 
         },
         { status: 400 }
       )
