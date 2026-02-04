@@ -29,16 +29,15 @@ export function CookieBanner() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-t border-border/50 shadow-lg">
       <div className="container mx-auto px-4 min-[375px]:px-6 py-3 sm:py-2">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 max-w-6xl mx-auto">
-          <p className="text-sm text-muted-foreground text-center sm:text-left flex-1">
+        <div className="flex flex-row flex-wrap items-center justify-between gap-3 sm:gap-4 max-w-6xl mx-auto">
+          <p className="text-xs sm:text-sm text-muted-foreground text-left flex-1">
             Мы используем файлы cookies для авторизации и корректной работы сайта.  {" "}
             <Link
               href="/privacy-policy"
-              className="text-primary hover:text-primary/80 underline underline-offset-3 transition-colors"
+              className="inline text-primary hover:text-primary/80 underline underline-offset-3 transition-colors"
             >
               Подробнее
             </Link>
-            
           </p>
           <Button
             onClick={handleDismiss}
