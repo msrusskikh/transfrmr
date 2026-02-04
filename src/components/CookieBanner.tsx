@@ -31,14 +31,14 @@ export function CookieBanner() {
       <div className="container mx-auto px-4 min-[375px]:px-6 py-3 sm:py-2">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 max-w-6xl mx-auto">
           <p className="text-sm text-muted-foreground text-center sm:text-left flex-1">
-            Мы используем файлы cookies для авторизации и корректной работы сайта. Подробнее – {" "}
+            Мы используем файлы cookies для авторизации и корректной работы сайта.  {" "}
             <Link
               href="/privacy-policy"
-              className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+              className="text-primary hover:text-primary/80 underline underline-offset-3 transition-colors"
             >
-              тут
+              Подробнее
             </Link>
-            .
+            
           </p>
           <Button
             onClick={handleDismiss}
