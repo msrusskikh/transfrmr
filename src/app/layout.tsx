@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <meta name="selfwork.ru" content="0Ni4yR2SJ5fSH6eOQ1EYALMCIbxXJZ94t4agMkMw7m05Jm3ZoL" />
+        <meta name="selfwork.ru" content="mXs39wBS2OMWCl9WyRxnVwqUH1npal1vmGAlhVNWsAzFMtSIgw" />
       </head>
       <body className={inter.className}>
         <script
