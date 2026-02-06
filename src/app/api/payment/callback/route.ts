@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { verifyWebhookSignature } from '@/lib/payment/signature'
+import { query } from '@/lib/db'
 
 // Allowed IP addresses from payment service
 const ALLOWED_IPS = ['178.205.169.35', '81.23.144.157']
@@ -65,33 +67,65 @@ export async function POST(request: NextRequest) {
     const body: PaymentCallbackData = await request.json()
 
     // Validate required fields
-    if (!body.order_id || !body.status || !body.signature) {
+    if (!body.order_id || !body.status || !body.signature || !body.amount) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Verify signature (structure for verification TBD from payment service docs)
-    // For now, we check that signature exists - actual verification algorithm needed
-    if (!body.signature) {
+    // Verify signature
+    const apiKey = process.env.PAYMENT_API_KEY
+    if (!apiKey) {
+      console.error('PAYMENT_API_KEY not configured')
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      )
+    }
+
+    const isValidSignature = verifyWebhookSignature({
+      orderId: body.order_id,
+      amount: String(body.amount),
+      apiKey,
+      receivedSignature: body.signature,
+    })
+
+    if (!isValidSignature) {
+      console.error('Invalid webhook signature for order:', body.order_id)
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
       )
     }
 
-    // Check for successful payment
+    // Determine payment status
     // The documentation mentions "payment.succeeded" event, but the JSON structure shows "status" field
     // We'll check for both possibilities
     const isSuccess = body.status === 'payment.succeeded' || 
                       body.status === 'succeeded' ||
                       body.status.toLowerCase().includes('success')
 
+    const paymentStatus = isSuccess ? 'succeeded' : body.status
+
+    // Store payment record in database
+    try {
+      await query(
+        `INSERT INTO payments (order_id, status, amount, verified_at, created_at)
+         VALUES ($1, $2, $3, NOW(), NOW())
+         ON CONFLICT (order_id) 
+         DO UPDATE SET status = $2, verified_at = NOW()`,
+        [body.order_id, paymentStatus, parseInt(body.amount)]
+      )
+      console.log('Payment stored in database:', body.order_id, 'Status:', paymentStatus)
+    } catch (dbError) {
+      console.error('Error storing payment in database:', dbError)
+      // Continue even if database storage fails - webhook should still return success
+    }
+
     if (isSuccess) {
       // Payment succeeded - process the payment
       console.log('Payment succeeded for order:', body.order_id)
-      // TODO: Store payment record, update user account, etc.
       
       return NextResponse.json(
         { success: true, message: 'Payment processed' },

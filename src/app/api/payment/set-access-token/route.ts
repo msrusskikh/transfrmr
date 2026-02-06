@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
 const TOKEN_COOKIE_NAME = 'payment_access_token'
-const TOKEN_EXPIRY_HOURS = 1
+const TOKEN_EXPIRY_HOURS = 12
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     // Generate secure token using crypto.randomUUID()
     const token = crypto.randomUUID()
 
-    // Calculate expiration date (1 hour from now)
+    // Calculate expiration date (12 hours from now)
     const expirationDate = new Date()
     expirationDate.setHours(expirationDate.getHours() + TOKEN_EXPIRY_HOURS)
 

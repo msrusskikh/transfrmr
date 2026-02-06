@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/card"
 import { useProgressStore } from "@/lib/progress"
 import { modules } from "@/lib/content"
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useState, Suspense, useRef } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter, useSearchParams } from "next/navigation"
 import { 
@@ -73,18 +73,64 @@ function CourseModuleCard({ module }: { module: { title: string; description: st
 function PaymentCallbackHandler() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [verificationState, setVerificationState] = useState<'verifying' | 'error' | 'success' | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showRetry, setShowRetry] = useState(false)
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const pollingStartTimeRef = useRef<number | null>(null)
+  const maxPollingTime = 30000 // 30 seconds max polling
 
   // Handle payment callback query parameters
   useEffect(() => {
     const success = searchParams.get('success')
     const error = searchParams.get('error')
-    const orderId = searchParams.get('id')
+    const orderId = searchParams.get('id') // Primary identification from URL
 
     if (success && orderId) {
-      // Payment successful - set access token and redirect to signup
-      const setAccessToken = async () => {
+      setVerificationState('verifying')
+      pollingStartTimeRef.current = Date.now()
+      verifyPayment(orderId)
+    } else if (error && orderId) {
+      // Payment failed - user already saw notification on payment processor side
+      // Just clean up the URL by removing query params
+      router.replace('/')
+    }
+
+    // Cleanup polling timeout on unmount
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current)
+      }
+    }
+  }, [searchParams, router])
+
+  const verifyPayment = async (orderId: string) => {
+    // Check if we've exceeded max polling time
+    if (pollingStartTimeRef.current) {
+      const elapsed = Date.now() - pollingStartTimeRef.current
+      if (elapsed > maxPollingTime) {
+        setVerificationState('error')
+        setErrorMessage('Проверка не удалась. Попробуйте обновить страницу через несколько минут или нажмите "Проверить снова".')
+        setShowRetry(true)
+        return
+      }
+    }
+
+    try {
+      const response = await fetch(`/api/payment/verify?order_id=${encodeURIComponent(orderId)}`, {
+        method: 'GET',
+      })
+
+      if (!response.ok) {
+        throw new Error('Verification failed')
+      }
+
+      const data = await response.json()
+
+      if (data.status === 'succeeded') {
+        // Payment verified - set access token and redirect to signup
         try {
-          const response = await fetch('/api/payment/set-access-token', {
+          const tokenResponse = await fetch('/api/payment/set-access-token', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -92,26 +138,82 @@ function PaymentCallbackHandler() {
             body: JSON.stringify({ orderId }),
           })
 
-          if (response.ok) {
+          if (tokenResponse.ok) {
+            setVerificationState('success')
             // Remove query params and redirect to signup
-            router.replace('/signup')
+            setTimeout(() => {
+              router.replace('/signup')
+            }, 500)
           } else {
-            console.error('Failed to set access token')
-            router.replace('/')
+            throw new Error('Failed to set access token')
           }
         } catch (error) {
           console.error('Error setting access token:', error)
-          router.replace('/')
+          setVerificationState('error')
+          setErrorMessage('Ошибка при установке токена доступа')
+          setShowRetry(true)
         }
+      } else if (data.status === 'pending') {
+        // Payment still pending - poll again (max 30 seconds)
+        pollingTimeoutRef.current = setTimeout(() => {
+          verifyPayment(orderId)
+        }, 2000) // Poll every 2 seconds
+      } else if (data.status === 'failed' || data.status === 'canceled') {
+        // Payment failed or canceled
+        setVerificationState('error')
+        setErrorMessage('Оплата не прошла. Попробуйте еще раз.')
+      } else {
+        // Unknown status - retry
+        setVerificationState('error')
+        setErrorMessage('Неизвестный статус оплаты')
+        setShowRetry(true)
       }
-
-      setAccessToken()
-    } else if (error && orderId) {
-      // Payment failed - user already saw notification on payment processor side
-      // Just clean up the URL by removing query params
-      router.replace('/')
+    } catch (error) {
+      console.error('Error verifying payment:', error)
+      setVerificationState('error')
+      setErrorMessage('Проверка не удалась. Попробуйте обновить страницу через несколько минут или нажмите "Проверить снова".')
+      setShowRetry(true)
     }
-  }, [searchParams, router])
+  }
+
+  const handleRetry = () => {
+    const orderId = searchParams.get('id') || localStorage.getItem('payment_order_id')
+    if (orderId) {
+      setVerificationState('verifying')
+      setErrorMessage(null)
+      setShowRetry(false)
+      pollingStartTimeRef.current = Date.now()
+      verifyPayment(orderId)
+    }
+  }
+
+  // Show verification overlay
+  if (verificationState === 'verifying') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
+        <div className="text-center space-y-4 px-4">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+          <p className="text-lg font-medium text-foreground">Проверка оплаты...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (verificationState === 'error') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
+        <div className="text-center space-y-4 px-4 max-w-md">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
+          <p className="text-lg font-medium text-foreground">{errorMessage}</p>
+          {showRetry && (
+            <Button onClick={handleRetry} className="mt-4">
+              Проверить снова
+            </Button>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return null
 }
@@ -121,6 +223,7 @@ export default function HomePage() {
   const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false)
   
   // Force dark theme on mount
   useEffect(() => {
@@ -595,13 +698,66 @@ export default function HomePage() {
                     <Button 
                       size="lg" 
                       className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-teal-600"
-                      onClick={() => {
-                        // TODO: Add purchase logic here
-                        alert('Функция покупки будет добавлена позже')
+                      onClick={async () => {
+                        if (!agreedToTerms) return
+                        
+                        setIsPaymentLoading(true)
+                        try {
+                          // Call payment init API
+                          const response = await fetch('/api/payment/init', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                          })
+
+                          if (!response.ok) {
+                            throw new Error('Failed to initialize payment')
+                          }
+
+                          const data = await response.json()
+                          const { orderId, amount, signature, info, paymentUrl } = data
+
+                          // Store order_id in localStorage for retry capability
+                          localStorage.setItem('payment_order_id', orderId)
+
+                          // Create form and submit to payment gateway
+                          const form = document.createElement('form')
+                          form.method = 'POST'
+                          form.action = paymentUrl
+                          form.style.display = 'none'
+
+                          // Add form fields
+                          const fields = [
+                            { name: 'order_id', value: orderId },
+                            { name: 'amount', value: String(amount) },
+                            { name: 'signature', value: signature },
+                            ...info.flatMap((item: any, index: number) => [
+                              { name: `info[${index}][name]`, value: item.name },
+                              { name: `info[${index}][quantity]`, value: String(item.quantity) },
+                              { name: `info[${index}][amount]`, value: String(item.amount) },
+                            ]),
+                          ]
+
+                          fields.forEach(({ name, value }) => {
+                            const input = document.createElement('input')
+                            input.type = 'hidden'
+                            input.name = name
+                            input.value = value
+                            form.appendChild(input)
+                          })
+
+                          document.body.appendChild(form)
+                          form.submit()
+                        } catch (error) {
+                          console.error('Error initiating payment:', error)
+                          alert('Ошибка при инициализации оплаты. Попробуйте еще раз.')
+                          setIsPaymentLoading(false)
+                        }
                       }}
-                      disabled={!agreedToTerms}
+                      disabled={!agreedToTerms || isPaymentLoading}
                     >
-                      Купить курс
+                      {isPaymentLoading ? 'Подготовка оплаты...' : 'Купить курс'}
                     </Button>
                     <div className="mt-3"></div>
                   </div>
