@@ -26,6 +26,10 @@ if (isSMTPConfigured()) {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
+    // Timeout settings to prevent hanging connections
+    connectionTimeout: 10000, // 10 seconds to establish connection
+    greetingTimeout: 10000,   // 10 seconds to receive greeting
+    socketTimeout: 10000,     // 10 seconds for socket operations
   })
 } else {
   console.warn(
@@ -66,6 +70,15 @@ export async function sendEmail({
     console.log(`[Email] Sent email to ${to}`)
   } catch (error) {
     console.error('[Email] Failed to send email:', error)
+    if (error instanceof Error) {
+      console.error('[Email] Error details:', {
+        message: error.message,
+        code: (error as any).code,
+        command: (error as any).command,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+      })
+    }
     throw error
   }
 }
