@@ -87,6 +87,8 @@ function PaymentCallbackHandler() {
     const error = searchParams.get('error')
     const orderId = searchParams.get('id') // Primary identification from URL
 
+    const hasSuccess = success !== null
+
     // #region agent log
     debugLogClient({
       sessionId: 'debug-session',
@@ -94,12 +96,12 @@ function PaymentCallbackHandler() {
       hypothesisId: 'H1',
       location: 'src/app/page.tsx:useEffect',
       message: 'PaymentCallbackHandler query params on mount',
-      data: { success, error, orderId },
+      data: { success, hasSuccess, error, orderId },
       timestamp: Date.now(),
     })
     // #endregion agent log
 
-    if (success && orderId) {
+    if (hasSuccess && orderId) {
       setVerificationState('verifying')
       pollingStartTimeRef.current = Date.now()
       verifyPayment(orderId)
