@@ -86,6 +86,22 @@ function PaymentCallbackHandler() {
     const error = searchParams.get('error')
     const orderId = searchParams.get('id') // Primary identification from URL
 
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'pre-fix',
+        hypothesisId: 'H1',
+        location: 'src/app/page.tsx:useEffect',
+        message: 'PaymentCallbackHandler query params on mount',
+        data: { success, error, orderId },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion agent log
+
     if (success && orderId) {
       setVerificationState('verifying')
       pollingStartTimeRef.current = Date.now()
@@ -127,6 +143,22 @@ function PaymentCallbackHandler() {
 
       const data = await response.json()
 
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: 'debug-session',
+          runId: 'pre-fix',
+          hypothesisId: 'H2',
+          location: 'src/app/page.tsx:verifyPayment',
+          message: 'Result from /api/payment/verify',
+          data: { orderId, status: data?.status, source: data?.source },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {})
+      // #endregion agent log
+
       if (data.status === 'succeeded') {
         // Payment verified - set access token and redirect to signup
         try {
@@ -137,6 +169,22 @@ function PaymentCallbackHandler() {
             },
             body: JSON.stringify({ orderId }),
           })
+
+          // #region agent log
+          fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sessionId: 'debug-session',
+              runId: 'pre-fix',
+              hypothesisId: 'H3',
+              location: 'src/app/page.tsx:verifyPayment',
+              message: 'Result from /api/payment/set-access-token',
+              data: { orderId, ok: tokenResponse.ok, status: tokenResponse.status },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {})
+          // #endregion agent log
 
           if (tokenResponse.ok) {
             setVerificationState('success')

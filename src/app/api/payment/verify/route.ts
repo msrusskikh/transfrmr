@@ -13,6 +13,22 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'pre-fix',
+        hypothesisId: 'H4',
+        location: 'src/app/api/payment/verify/route.ts:GET',
+        message: 'Verify payment called',
+        data: { orderId },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion agent log
+
     // Step 1: Check database first (fast path)
     try {
       const dbResult = await query(

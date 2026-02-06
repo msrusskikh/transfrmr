@@ -10,6 +10,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { orderId } = body
 
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: 'debug-session',
+        runId: 'pre-fix',
+        hypothesisId: 'H5',
+        location: 'src/app/api/payment/set-access-token/route.ts:POST',
+        message: 'Set access token called',
+        data: { orderId },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion agent log
+
     // Generate secure token using crypto.randomUUID()
     const token = crypto.randomUUID()
 
