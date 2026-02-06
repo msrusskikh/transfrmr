@@ -88,9 +88,9 @@ export default function SignupPage() {
       
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Регистрация</CardTitle>
+          <CardTitle className="text-2xl">Поздравляем с покупкой! </CardTitle>
           <CardDescription>
-            Создайте аккаунт для доступа к курсу
+          Создайте аккаунт для доступа к курсу
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -145,23 +145,18 @@ export default function SignupPage() {
               {loading ? 'Регистрация...' : 'Зарегистрироваться'}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">Уже есть аккаунт? </span>
-            <Link href="/login" className="text-primary hover:underline">
-              Войти
-            </Link>
-          </div>
-          <div className="mt-2 text-center">
-            <Link href="/" className="text-sm text-muted-foreground hover:underline">
-              Вернуться на главную
-            </Link>
-          </div>
         </CardContent>
       </Card>
 
       {/* Success Dialog */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog 
+        open={showSuccessDialog} 
+        onOpenChange={(open) => {
+          // Prevent closing the dialog - users must use the action buttons
+          if (!open) return
+        }}
+      >
+        <DialogContent className="sm:max-w-md [&>button]:hidden" onInteractOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
               <div className="rounded-full bg-green-500/10 p-3">
