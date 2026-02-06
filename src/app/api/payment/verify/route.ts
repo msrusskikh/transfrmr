@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
-import { debugLogServer } from '@/lib/debug-log'
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,18 +12,6 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       )
     }
-
-    // #region agent log
-    await debugLogServer({
-      sessionId: 'debug-session',
-      runId: 'pre-fix',
-      hypothesisId: 'H4',
-      location: 'src/app/api/payment/verify/route.ts:GET',
-      message: 'Verify payment called',
-      data: { orderId },
-      timestamp: Date.now(),
-    })
-    // #endregion agent log
 
     // Step 1: Check database first (fast path)
     try {
