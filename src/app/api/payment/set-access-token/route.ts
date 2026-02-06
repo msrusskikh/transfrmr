@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { debugLogServer } from '@/lib/debug-log'
 
 const TOKEN_COOKIE_NAME = 'payment_access_token'
 const TOKEN_EXPIRY_HOURS = 12
@@ -11,19 +12,15 @@ export async function POST(request: NextRequest) {
     const { orderId } = body
 
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: 'debug-session',
-        runId: 'pre-fix',
-        hypothesisId: 'H5',
-        location: 'src/app/api/payment/set-access-token/route.ts:POST',
-        message: 'Set access token called',
-        data: { orderId },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
+    await debugLogServer({
+      sessionId: 'debug-session',
+      runId: 'pre-fix',
+      hypothesisId: 'H5',
+      location: 'src/app/api/payment/set-access-token/route.ts:POST',
+      message: 'Set access token called',
+      data: { orderId },
+      timestamp: Date.now(),
+    })
     // #endregion agent log
 
     // Generate secure token using crypto.randomUUID()
