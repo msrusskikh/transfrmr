@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateOrderId, generatePaymentSignature } from '@/lib/payment/signature'
 
-const PAYMENT_AMOUNT = 329000 // 3,290 ₽ in kopecks
+// NOTE: Temporarily set to 10 ₽ (1000 kopecks) for testing with the gateway.
+// Update back to 329000 (3,290 ₽) for production.
+const PAYMENT_AMOUNT = 1000 // 10 ₽ in kopecks (TESTING)
 const PRODUCT_NAME = 'Доступ к курсу "Трансформер"'
 const PRODUCT_QUANTITY = 1
 
