@@ -1,12 +1,20 @@
 import { Pool, QueryResult, QueryResultRow } from 'pg'
-import { appendFile } from 'fs/promises'
-import { join } from 'path'
+import { appendFile, mkdir } from 'fs/promises'
+import { join, dirname } from 'path'
 
 const LOG_FILE = join(process.cwd(), '.cursor', 'debug.log')
 async function logDebug(data: any) {
+  const logEntry = JSON.stringify({...data, timestamp: Date.now()}) + '\n'
+  // Also log to console (captured by PM2)
+  console.log('[DEBUG]', logEntry.trim())
   try {
-    await appendFile(LOG_FILE, JSON.stringify({...data, timestamp: Date.now()}) + '\n')
-  } catch {}
+    // Ensure directory exists
+    await mkdir(dirname(LOG_FILE), { recursive: true })
+    await appendFile(LOG_FILE, logEntry)
+  } catch (err) {
+    // If file write fails, at least we have console logs
+    console.error('[DEBUG] Failed to write log file:', err)
+  }
 }
 
 // Lazy initialization: pool is created only when needed

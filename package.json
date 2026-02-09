@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "export": "next build",
-    "create-admin": "tsx scripts/create-admin-user.ts"
+    "create-admin": "tsx scripts/create-admin-user.ts",
+    "grant-permissions": "tsx scripts/grant-permissions.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
