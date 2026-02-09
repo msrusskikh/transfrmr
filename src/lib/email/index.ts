@@ -91,13 +91,14 @@ export async function sendVerificationEmail(
   verificationToken: string
 ): Promise<void> {
   // #region agent log
-  console.log('[DEBUG] sendVerificationEmail entry:', { email, hasToken: !!verificationToken, NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL, NODE_ENV: process.env.NODE_ENV })
-  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:89',message:'sendVerificationEmail entry',data:{email,hasToken:!!verificationToken,tokenLength:verificationToken?.length,NEXT_PUBLIC_APP_URL:process.env.NEXT_PUBLIC_APP_URL,NODE_ENV:process.env.NODE_ENV},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  console.log('[DEBUG] sendVerificationEmail entry:', { email, hasToken: !!verificationToken, APP_URL: process.env.APP_URL, NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL, NODE_ENV: process.env.NODE_ENV })
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:89',message:'sendVerificationEmail entry',data:{email,hasToken:!!verificationToken,tokenLength:verificationToken?.length,APP_URL:process.env.APP_URL,NEXT_PUBLIC_APP_URL:process.env.NEXT_PUBLIC_APP_URL,NODE_ENV:process.env.NODE_ENV},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
   // #endregion
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  // Use APP_URL (runtime) first, fallback to NEXT_PUBLIC_APP_URL (build-time), then localhost
+  const appUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   // #region agent log
-  console.log('[DEBUG] appUrl determined:', { appUrl, fallbackUsed: !process.env.NEXT_PUBLIC_APP_URL, envValue: process.env.NEXT_PUBLIC_APP_URL })
-  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:93',message:'appUrl determined',data:{appUrl,fallbackUsed:!process.env.NEXT_PUBLIC_APP_URL},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  console.log('[DEBUG] appUrl determined:', { appUrl, APP_URL: process.env.APP_URL, NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL, fallbackUsed: !process.env.APP_URL && !process.env.NEXT_PUBLIC_APP_URL })
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:93',message:'appUrl determined',data:{appUrl,APP_URL:process.env.APP_URL,NEXT_PUBLIC_APP_URL:process.env.NEXT_PUBLIC_APP_URL,fallbackUsed:!process.env.APP_URL&&!process.env.NEXT_PUBLIC_APP_URL},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
   // #endregion
   const verificationUrl = `${appUrl}/api/auth/verify-email?token=${verificationToken}`
   // #region agent log
@@ -125,7 +126,8 @@ export async function sendPasswordResetEmail(
   email: string,
   resetToken: string
 ): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  // Use APP_URL (runtime) first, fallback to NEXT_PUBLIC_APP_URL (build-time), then localhost
+  const appUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const resetUrl = `${appUrl}/reset-password?token=${resetToken}`
 
   const { subject, html } = getPasswordResetEmailTemplate(resetUrl)
