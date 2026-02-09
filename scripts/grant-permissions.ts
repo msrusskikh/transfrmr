@@ -9,6 +9,39 @@
  */
 
 import { Pool } from 'pg'
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+
+// Load environment variables from .env or .env.local
+function loadEnvFile() {
+  const envPath = join(process.cwd(), '.env')
+  const envLocalPath = join(process.cwd(), '.env.local')
+  
+  const envFile = existsSync(envPath) ? envPath : (existsSync(envLocalPath) ? envLocalPath : null)
+  
+  if (envFile) {
+    try {
+      const content = readFileSync(envFile, 'utf8')
+      content.split('\n').forEach(line => {
+        line = line.trim()
+        if (line && !line.startsWith('#')) {
+          const [key, ...valueParts] = line.split('=')
+          if (key && valueParts.length > 0) {
+            const value = valueParts.join('=').trim().replace(/^["']|["']$/g, '')
+            if (!process.env[key.trim()]) {
+              process.env[key.trim()] = value
+            }
+          }
+        }
+      })
+    } catch (error) {
+      // Silently fail if we can't read the file
+    }
+  }
+}
+
+// Load env vars before anything else
+loadEnvFile()
 
 function parseDatabaseUrl(url: string): { user?: string; database?: string } {
   try {
