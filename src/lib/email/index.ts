@@ -90,8 +90,17 @@ export async function sendVerificationEmail(
   email: string,
   verificationToken: string
 ): Promise<void> {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:89',message:'sendVerificationEmail entry',data:{email,hasToken:!!verificationToken,tokenLength:verificationToken?.length,NEXT_PUBLIC_APP_URL:process.env.NEXT_PUBLIC_APP_URL,NODE_ENV:process.env.NODE_ENV},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:93',message:'appUrl determined',data:{appUrl,fallbackUsed:!process.env.NEXT_PUBLIC_APP_URL},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const verificationUrl = `${appUrl}/api/auth/verify-email?token=${verificationToken}`
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:95',message:'verificationUrl generated',data:{verificationUrl,urlStartsWithLocalhost:verificationUrl.startsWith('http://localhost')||verificationUrl.startsWith('https://localhost')},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
 
   const { subject, html } = getVerificationEmailTemplate(verificationUrl)
 
@@ -100,6 +109,9 @@ export async function sendVerificationEmail(
     subject,
     html,
   })
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'src/lib/email/index.ts:102',message:'sendVerificationEmail exit',data:{email,verificationUrl},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
 }
 
 /**
