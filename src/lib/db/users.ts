@@ -1,15 +1,6 @@
 import { query } from './index'
 import { hashPassword, comparePasswordSafe } from '@/lib/auth/password'
 import { generateSecureToken, hashToken } from '@/lib/auth/tokens'
-import { appendFile } from 'fs/promises'
-import { join } from 'path'
-
-const LOG_FILE = join(process.cwd(), '.cursor', 'debug.log')
-async function logDebug(data: any) {
-  try {
-    await appendFile(LOG_FILE, JSON.stringify({...data, timestamp: Date.now()}) + '\n')
-  } catch {}
-}
 
 export interface User {
   id: string
@@ -31,17 +22,11 @@ export async function createUser(
   email: string,
   password: string
 ): Promise<{ id: string; email: string; verificationToken: string }> {
-  // #region agent log
-  logDebug({location:'users.ts:21',message:'createUser: entry',data:{email:email?.substring(0,10)+'...',hasPassword:!!password},runId:'run1',hypothesisId:'A'});
-  // #endregion
   const passwordHash = await hashPassword(password)
   const verificationToken = generateSecureToken()
   const verificationExpires = new Date()
   verificationExpires.setHours(verificationExpires.getHours() + 24) // 24 hours
 
-  // #region agent log
-  logDebug({location:'users.ts:30',message:'createUser: before query',data:{hasPasswordHash:!!passwordHash,hasToken:!!verificationToken},runId:'run1',hypothesisId:'A'});
-  // #endregion
   const result = await query<User>(
     `INSERT INTO users (email, password_hash, email_verification_token, email_verification_expires)
      VALUES ($1, $2, $3, $4)
@@ -53,9 +38,6 @@ export async function createUser(
       verificationExpires.toISOString(),
     ]
   )
-  // #region agent log
-  logDebug({location:'users.ts:42',message:'createUser: query success',data:{rowCount:result.rowCount,hasUser:!!result.rows[0]},runId:'run1',hypothesisId:'A'});
-  // #endregion
 
   const user = result.rows[0]
   
