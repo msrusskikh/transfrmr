@@ -1,6 +1,15 @@
 import { query } from './index'
 import { hashPassword, comparePasswordSafe } from '@/lib/auth/password'
 import { generateSecureToken, hashToken } from '@/lib/auth/tokens'
+import { appendFile } from 'fs/promises'
+import { join } from 'path'
+
+const LOG_FILE = join(process.cwd(), '.cursor', 'debug.log')
+async function logDebug(data: any) {
+  try {
+    await appendFile(LOG_FILE, JSON.stringify({...data, timestamp: Date.now()}) + '\n')
+  } catch {}
+}
 
 export interface User {
   id: string
@@ -23,7 +32,7 @@ export async function createUser(
   password: string
 ): Promise<{ id: string; email: string; verificationToken: string }> {
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:21',message:'createUser: entry',data:{email:email?.substring(0,10)+'...',hasPassword:!!password},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  logDebug({location:'users.ts:21',message:'createUser: entry',data:{email:email?.substring(0,10)+'...',hasPassword:!!password},runId:'run1',hypothesisId:'A'});
   // #endregion
   const passwordHash = await hashPassword(password)
   const verificationToken = generateSecureToken()
@@ -31,7 +40,7 @@ export async function createUser(
   verificationExpires.setHours(verificationExpires.getHours() + 24) // 24 hours
 
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:30',message:'createUser: before query',data:{hasPasswordHash:!!passwordHash,hasToken:!!verificationToken},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  logDebug({location:'users.ts:30',message:'createUser: before query',data:{hasPasswordHash:!!passwordHash,hasToken:!!verificationToken},runId:'run1',hypothesisId:'A'});
   // #endregion
   const result = await query<User>(
     `INSERT INTO users (email, password_hash, email_verification_token, email_verification_expires)
@@ -45,7 +54,7 @@ export async function createUser(
     ]
   )
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:42',message:'createUser: query success',data:{rowCount:result.rowCount,hasUser:!!result.rows[0]},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  logDebug({location:'users.ts:42',message:'createUser: query success',data:{rowCount:result.rowCount,hasUser:!!result.rows[0]},runId:'run1',hypothesisId:'A'});
   // #endregion
 
   const user = result.rows[0]
