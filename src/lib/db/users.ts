@@ -22,11 +22,17 @@ export async function createUser(
   email: string,
   password: string
 ): Promise<{ id: string; email: string; verificationToken: string }> {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:21',message:'createUser: entry',data:{email:email?.substring(0,10)+'...',hasPassword:!!password},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const passwordHash = await hashPassword(password)
   const verificationToken = generateSecureToken()
   const verificationExpires = new Date()
   verificationExpires.setHours(verificationExpires.getHours() + 24) // 24 hours
 
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:30',message:'createUser: before query',data:{hasPasswordHash:!!passwordHash,hasToken:!!verificationToken},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   const result = await query<User>(
     `INSERT INTO users (email, password_hash, email_verification_token, email_verification_expires)
      VALUES ($1, $2, $3, $4)
@@ -38,6 +44,9 @@ export async function createUser(
       verificationExpires.toISOString(),
     ]
   )
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'users.ts:42',message:'createUser: query success',data:{rowCount:result.rowCount,hasUser:!!result.rows[0]},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
 
   const user = result.rows[0]
   

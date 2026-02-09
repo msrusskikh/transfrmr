@@ -39,12 +39,21 @@ export async function query<T extends QueryResultRow = any>(
   params?: any[]
 ): Promise<QueryResult<T>> {
   const start = Date.now()
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'db/index.ts:37',message:'query: entry',data:{hasDatabaseUrl:!!process.env.DATABASE_URL,queryType:text.substring(0,20)},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
   try {
     const result = await getPool().query<T>(text, params)
     const duration = Date.now() - start
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'db/index.ts:44',message:'query: success',data:{duration,rowCount:result.rowCount},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     console.log('Executed query', { text, duration, rows: result.rowCount })
     return result
   } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/f97c7060-b0a2-4dc0-8148-1507187c7f07',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'db/index.ts:48',message:'query: error',data:{errorType:error?.constructor?.name,errorCode:error?.code,errorMessage:error instanceof Error?error.message:String(error),errorName:error?.name},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     console.error('Database query error', { text, error })
     throw error
   }
