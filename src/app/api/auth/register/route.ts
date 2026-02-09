@@ -3,22 +3,14 @@ import { registerSchema } from '@/lib/auth/validation'
 import { createUser } from '@/lib/db/users'
 import { sendVerificationEmail } from '@/lib/email'
 import { getClientIP } from '@/lib/auth/rate-limit'
-import { appendFile, mkdir } from 'fs/promises'
-import { join, dirname } from 'path'
+import { appendFile } from 'fs/promises'
+import { join } from 'path'
 
 const LOG_FILE = join(process.cwd(), '.cursor', 'debug.log')
 async function logDebug(data: any) {
-  const logEntry = JSON.stringify({...data, timestamp: Date.now()}) + '\n'
-  // Also log to console (captured by PM2)
-  console.log('[DEBUG]', logEntry.trim())
   try {
-    // Ensure directory exists
-    await mkdir(dirname(LOG_FILE), { recursive: true })
-    await appendFile(LOG_FILE, logEntry)
-  } catch (err) {
-    // If file write fails, at least we have console logs
-    console.error('[DEBUG] Failed to write log file:', err)
-  }
+    await appendFile(LOG_FILE, JSON.stringify({...data, timestamp: Date.now()}) + '\n')
+  } catch {}
 }
 
 export async function POST(request: NextRequest) {

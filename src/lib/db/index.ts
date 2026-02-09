@@ -1,20 +1,12 @@
 import { Pool, QueryResult, QueryResultRow } from 'pg'
-import { appendFile, mkdir } from 'fs/promises'
-import { join, dirname } from 'path'
+import { appendFile } from 'fs/promises'
+import { join } from 'path'
 
 const LOG_FILE = join(process.cwd(), '.cursor', 'debug.log')
 async function logDebug(data: any) {
-  const logEntry = JSON.stringify({...data, timestamp: Date.now()}) + '\n'
-  // Also log to console (captured by PM2)
-  console.log('[DEBUG]', logEntry.trim())
   try {
-    // Ensure directory exists
-    await mkdir(dirname(LOG_FILE), { recursive: true })
-    await appendFile(LOG_FILE, logEntry)
-  } catch (err) {
-    // If file write fails, at least we have console logs
-    console.error('[DEBUG] Failed to write log file:', err)
-  }
+    await appendFile(LOG_FILE, JSON.stringify({...data, timestamp: Date.now()}) + '\n')
+  } catch {}
 }
 
 // Lazy initialization: pool is created only when needed
@@ -26,6 +18,9 @@ let pool: Pool | null = null
  */
 function getPool(): Pool {
   if (!pool) {
+    // #region agent log
+    logDebug({location:'db/index.ts:19',message:'pool: initializing',data:{hasDatabaseUrl:!!process.env.DATABASE_URL},runId:'run1',hypothesisId:'A'}).catch(()=>{});
+    // #endregion
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL environment variable is not set')
     }
@@ -38,10 +33,36 @@ function getPool(): Pool {
       connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
     })
 
-    // Handle pool errors
-    pool.on('error', (err) => {
-      console.error('Unexpected error on idle client', err)
-      process.exit(-1)
+    // Handle pool errors - DO NOT exit process, just log and handle gracefully
+    pool.on('error', async (err) => {
+      // #region agent log
+      await logDebug({location:'db/index.ts:34',message:'pool: error event',data:{errorType:err?.constructor?.name,errorCode:(err as any)?.code,errorMessage:err instanceof Error?err.message:String(err),errorName:(err as any)?.name,poolTotalCount:pool?.totalCount,poolIdleCount:pool?.idleCount,poolWaitingCount:pool?.waitingCount},runId:'run1',hypothesisId:'A'});
+      // #endregion
+      console.error('[DB Pool] Unexpected error on idle client', {
+        error: err,
+        message: err instanceof Error ? err.message : String(err),
+        code: (err as any)?.code,
+        poolStats: {
+          total: pool?.totalCount,
+          idle: pool?.idleCount,
+          waiting: pool?.waitingCount,
+        }
+      })
+      // Do NOT call process.exit() - let PM2 handle restarts if needed
+      // The pool will automatically retry connections on next query
+    })
+
+    // Monitor pool connection events
+    pool.on('connect', async (client) => {
+      // #region agent log
+      await logDebug({location:'db/index.ts:50',message:'pool: client connected',data:{poolTotalCount:pool?.totalCount,poolIdleCount:pool?.idleCount},runId:'run1',hypothesisId:'B'});
+      // #endregion
+    })
+
+    pool.on('remove', async () => {
+      // #region agent log
+      await logDebug({location:'db/index.ts:55',message:'pool: client removed',data:{poolTotalCount:pool?.totalCount,poolIdleCount:pool?.idleCount},runId:'run1',hypothesisId:'B'});
+      // #endregion
     })
   }
 
@@ -80,7 +101,21 @@ export async function query<T extends QueryResultRow = any>(
  * Get a client from the pool for transactions
  */
 export async function getClient() {
-  return getPool().connect()
+  // #region agent log
+  await logDebug({location:'db/index.ts:74',message:'getClient: entry',data:{poolTotalCount:getPool().totalCount,poolIdleCount:getPool().idleCount,poolWaitingCount:getPool().waitingCount},runId:'run1',hypothesisId:'B'});
+  // #endregion
+  try {
+    const client = await getPool().connect()
+    // #region agent log
+    await logDebug({location:'db/index.ts:77',message:'getClient: success',data:{poolTotalCount:getPool().totalCount,poolIdleCount:getPool().idleCount},runId:'run1',hypothesisId:'B'});
+    // #endregion
+    return client
+  } catch (error: any) {
+    // #region agent log
+    await logDebug({location:'db/index.ts:81',message:'getClient: error',data:{errorType:error?.constructor?.name,errorCode:error?.code,errorMessage:error instanceof Error?error.message:String(error),poolTotalCount:getPool().totalCount,poolIdleCount:getPool().idleCount,poolWaitingCount:getPool().waitingCount},runId:'run1',hypothesisId:'B'});
+    // #endregion
+    throw error
+  }
 }
 
 /**
