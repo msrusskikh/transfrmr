@@ -67,11 +67,35 @@ export const useAuth = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true })
     try {
-      const res = await fetch('/api/auth/me')
-      if (res.ok) {
-        const data = await res.json()
-        set({ user: data.user })
-      } else {
+      // Add timeout to prevent hanging
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
+      try {
+        const res = await fetch('/api/auth/me', {
+          signal: controller.signal,
+          // Add cache control to prevent stale responses
+          cache: 'no-store',
+        })
+        clearTimeout(timeoutId)
+        
+        if (res.ok) {
+          const data = await res.json()
+          set({ user: data.user })
+        } else if (res.status === 503) {
+          // Service unavailable - database might be recovering
+          console.warn('[useAuth] Auth service temporarily unavailable')
+          set({ user: null })
+        } else {
+          set({ user: null })
+        }
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId)
+        if (fetchError.name === 'AbortError') {
+          console.warn('[useAuth] Auth check timeout - proceeding without auth')
+        } else {
+          throw fetchError
+        }
         set({ user: null })
       }
     } catch (error) {

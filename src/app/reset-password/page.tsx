@@ -156,7 +156,7 @@ function ResetPasswordForm() {
               </div>
             )}
             <Button type="submit" className="w-full" disabled={loading || !token}>
-              {loading ? 'Сброс...' : 'Сбросить пароль'}
+              {loading ? 'Обновление...' : 'Обновить пароль'}
             </Button>
           </form>
           <div className="mt-4 text-center">

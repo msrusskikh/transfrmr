@@ -18,7 +18,8 @@ function getPool(): Pool {
       // Connection pool settings
       max: 20, // Maximum number of clients in the pool
       idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-      connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection could not be established
+      connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection could not be established (increased from 2s for post-outage recovery)
+      // Note: Query timeouts are handled in the query() function wrapper, not here
     })
 
     // Handle pool errors - DO NOT exit process, just log and handle gracefully
@@ -42,20 +43,46 @@ function getPool(): Pool {
 }
 
 /**
- * Execute a query with parameters
+ * Execute a query with parameters and timeout protection
  */
 export async function query<T extends QueryResultRow = any>(
   text: string,
-  params?: any[]
+  params?: any[],
+  timeoutMs: number = 5000
 ): Promise<QueryResult<T>> {
   const start = Date.now()
+  
+  // Create a timeout promise
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Query timeout after ${timeoutMs}ms: ${text.substring(0, 50)}...`))
+    }, timeoutMs)
+  })
+  
   try {
-    const result = await getPool().query<T>(text, params)
+    // Race between query and timeout
+    const result = await Promise.race([
+      getPool().query<T>(text, params),
+      timeoutPromise
+    ])
+    
     const duration = Date.now() - start
-    console.log('Executed query', { text, duration, rows: result.rowCount })
+    if (duration > 1000) {
+      // Log slow queries (>1s)
+      console.warn('Slow query detected', { text: text.substring(0, 100), duration, rows: result.rowCount })
+    } else {
+      console.log('Executed query', { text: text.substring(0, 100), duration, rows: result.rowCount })
+    }
     return result
   } catch (error: any) {
-    console.error('Database query error', { text, error })
+    const duration = Date.now() - start
+    console.error('Database query error', { 
+      text: text.substring(0, 100), 
+      duration,
+      error: error.message || error,
+      code: error.code,
+      timeout: duration >= timeoutMs
+    })
     throw error
   }
 }

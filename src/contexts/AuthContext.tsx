@@ -14,9 +14,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, isLoading, logout, checkAuth } = useAuthStore()
 
-  // Check auth on mount
+  // Check auth on mount with timeout protection
   useEffect(() => {
-    checkAuth()
+    let mounted = true
+    
+    // Set a timeout to stop loading if auth check takes too long
+    const timeoutId = setTimeout(() => {
+      if (mounted) {
+        console.warn('[AuthProvider] Auth check timeout - proceeding without auth')
+        // Don't block rendering if auth check is slow
+      }
+    }, 5000) // 5 second timeout
+    
+    // Run auth check with error handling
+    checkAuth().catch((error) => {
+      console.error('[AuthProvider] Auth check failed:', error)
+      // Don't block rendering on auth failure
+    }).finally(() => {
+      clearTimeout(timeoutId)
+    })
+    
+    return () => {
+      mounted = false
+      clearTimeout(timeoutId)
+    }
   }, [checkAuth])
 
   const signOut = async () => {
