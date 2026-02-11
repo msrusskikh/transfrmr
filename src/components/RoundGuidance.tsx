@@ -19,20 +19,20 @@ const RoundGuidance: React.FC<RoundGuidanceProps> = ({
   const frameworkElements = hasFrameworkElements ? roundData.frameworkElements : [];
   
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-      <h3 className="text-lg font-semibold text-blue-900 mb-3">
+    <div className="rounded-lg p-6 border border-border/60 bg-card/60">
+      <h3 className="text-lg font-semibold text-foreground mb-3">
         {roundData.title}
       </h3>
       
-      <p className="text-blue-800 mb-4">
+      <p className="text-muted-foreground mb-4">
         {roundData.description}
       </p>
       
       {/* Starter prompt for Round 1 */}
       {currentRound === 1 && 'starterPrompt' in roundData && roundData.starterPrompt && (
-        <div className="bg-white p-4 rounded border mb-4">
-          <h4 className="font-medium text-gray-900 mb-2">Промпт:</h4>
-          <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+        <div className="bg-card dark:bg-gray-900/60 p-4 rounded border border-border/60 mb-4">
+          <h4 className="font-medium text-foreground mb-2">Промпт:</h4>
+          <code className="text-sm bg-muted/70 dark:bg-gray-800 text-foreground px-2 py-1 rounded">
             {roundData.starterPrompt}
           </code>
         </div>
@@ -41,10 +41,10 @@ const RoundGuidance: React.FC<RoundGuidanceProps> = ({
       {/* Framework Elements Checklist */}
       {frameworkElements.length > 0 && (
         <div className="mb-6">
-          <h4 className="font-semibold text-blue-900 mb-3 text-base">
+          <h4 className="font-semibold text-foreground mb-3 text-base">
             Элементы фреймворка для этого раунда:
           </h4>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-card dark:bg-gray-900/60 rounded-lg border border-border/60 p-4">
             <div className="grid grid-cols-1 gap-3">
               {frameworkElements.map((elementKey) => {
                 const element = FRAMEWORK_ELEMENTS[elementKey as keyof typeof FRAMEWORK_ELEMENTS];
@@ -56,9 +56,9 @@ const RoundGuidance: React.FC<RoundGuidanceProps> = ({
                   <div 
                     key={elementKey}
                     className={`px-3 py-2 rounded-md text-sm border ${
-                      isPresent 
-                        ? 'bg-green-50 border-green-200 text-green-800' 
-                        : 'bg-gray-50 border-gray-200 text-gray-600'
+                      isPresent
+                        ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-900 dark:text-emerald-100'
+                        : 'bg-muted/60 dark:bg-gray-800/80 border-border/60 text-muted-foreground'
                     }`}
                   >
                     <div className="flex items-center space-x-2 mb-1">
@@ -84,14 +84,14 @@ const RoundGuidance: React.FC<RoundGuidanceProps> = ({
       {/* Examples */}
       {'examples' in roundData && roundData.examples && roundData.examples.length > 0 && (
         <div className="mb-6">
-          <h4 className="font-semibold text-blue-900 mb-3 text-base">
+          <h4 className="font-semibold text-foreground mb-3 text-base">
             Примеры:
           </h4>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-card dark:bg-gray-900/60 rounded-lg border border-border/60 p-4">
             <div className="space-y-3">
               {roundData.examples.map((example, index) => (
-                <div key={index} className="px-3 py-2 rounded-md text-sm bg-gray-50 border border-gray-200">
-                  <code className="text-blue-700">{example}</code>
+                <div key={index} className="px-3 py-2 rounded-md text-sm bg-muted/60 dark:bg-gray-800/80 border border-border/60">
+                  <code className="text-foreground">{example}</code>
                 </div>
               ))}
             </div>
@@ -101,11 +101,11 @@ const RoundGuidance: React.FC<RoundGuidanceProps> = ({
       
       {/* Expected output */}
       <div className="mb-6">
-        <h4 className="font-semibold text-blue-900 mb-3 text-base">
+        <h4 className="font-semibold text-foreground mb-3 text-base">
           Ожидаемый результат:
         </h4>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-sm text-gray-700">{roundData.expectedOutput}</p>
+        <div className="bg-card dark:bg-gray-900/60 rounded-lg border border-border/60 p-4">
+          <p className="text-sm text-muted-foreground">{roundData.expectedOutput}</p>
         </div>
       </div>
     </div>

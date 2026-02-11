@@ -102,49 +102,9 @@ export default function PersonalWorkflowBuilderLab() {
     error: null
   })
 
-  // Debug initial state
+  // Component lifecycle - ensure we always have at least one task
   useEffect(() => {
-    console.log('Initial state set:', state)
-    console.log('Initial userTasks length:', state.userTasks.length)
-    console.log('Initial userTasks:', state.userTasks)
-  }, []) // Empty dependency array - runs only once on mount
-
-  // Debug state changes
-  useEffect(() => {
-    console.log('State changed:', {
-      isLoading: state.isLoading,
-      error: state.error,
-      analysisResults: state.analysisResults ? `present (length: ${state.analysisResults.length})` : 'null',
-      currentStep: state.currentStep,
-      userTasksLength: state.userTasks.length
-    })
-    
-    // Additional debugging for analysisResults
-    if (state.analysisResults) {
-      console.log('Analysis results content preview:', state.analysisResults.substring(0, 200) + '...')
-    }
-  }, [state.isLoading, state.error, state.analysisResults, state.currentStep, state.userTasks.length])
-
-  // Debug currentStep changes specifically
-  useEffect(() => {
-    console.log('🔄 Current step changed to:', state.currentStep)
-  }, [state.currentStep])
-
-  // Debug generatedWorkflow changes specifically
-  useEffect(() => {
-    console.log('🔄 Generated workflow changed:', state.generatedWorkflow ? `present (length: ${state.generatedWorkflow.length})` : 'null')
-    if (state.generatedWorkflow) {
-      console.log('Generated workflow preview:', state.generatedWorkflow.substring(0, 200) + '...')
-    }
-  }, [state.generatedWorkflow])
-
-  // Component lifecycle logging
-  useEffect(() => {
-    console.log('PersonalWorkflowBuilderLab mounted')
-    
-    // Ensure we always have at least one task
     if (state.userTasks.length === 0) {
-      console.log('No tasks found, adding initial task')
       setState(prev => ({
         ...prev,
         userTasks: [{ description: '', frequency: '', duration: '' }]
@@ -160,32 +120,23 @@ export default function PersonalWorkflowBuilderLab() {
       const savedImplPlan = localStorage.getItem('pwb_lab_impl_plan')
       
       if (savedWorkflow) {
-        console.log('Restoring saved workflow from localStorage')
         setState(prev => ({ ...prev, generatedWorkflow: savedWorkflow }))
       }
       if (savedStep) {
         const step = parseInt(savedStep) as 1 | 2 | 3 | 4 | 5 | 6
-        console.log('Restoring saved step from localStorage:', step)
         setState(prev => ({ ...prev, currentStep: step }))
       }
       if (savedAnalysis) {
-        console.log('Restoring saved analysis from localStorage')
         setState(prev => ({ ...prev, analysisResults: savedAnalysis }))
       }
       if (savedToolRecs) {
-        console.log('Restoring saved tool recommendations from localStorage')
         setState(prev => ({ ...prev, toolRecommendations: savedToolRecs }))
       }
       if (savedImplPlan) {
-        console.log('Restoring saved implementation plan from localStorage')
         setState(prev => ({ ...prev, implementationPlan: savedImplPlan }))
       }
     }
-    
-    return () => {
-      console.log('PersonalWorkflowBuilderLab unmounted')
-    }
-  }, []) // Empty dependency array - runs only once on mount
+  }, [])
 
   // Persist important state to localStorage
   useEffect(() => {
@@ -212,59 +163,23 @@ export default function PersonalWorkflowBuilderLab() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [analysisProgress, setAnalysisProgress] = useState<string>('')
 
-  // Debug component re-renders
-  console.log('PersonalWorkflowBuilderLab render - current state:', {
-    isLoading: state.isLoading,
-    error: state.error,
-    analysisResults: state.analysisResults ? `present (length: ${state.analysisResults.length})` : 'null',
-    currentStep: state.currentStep,
-    userTasksLength: state.userTasks.length,
-    isSubmitting
-  })
-
-  // Debug setState calls
-  const debugSetState = (updater: any, description: string) => {
-    console.log(`🔄 setState called: ${description}`)
-    if (typeof updater === 'function') {
-      const prevState = state
-      const newState = updater(prevState)
-      console.log('Previous state:', prevState)
-      console.log('New state:', newState)
-      return newState
-    } else {
-      console.log('New state:', updater)
-      return updater
-    }
-  }
-
-  const setStateWithDebug = (updater: (prev: LabState) => LabState | LabState, description: string) => {
-    const newState = debugSetState(updater, description)
-    setState(newState)
-  }
-
   const handleTaskSubmit = async () => {
     if (state.userTasks.length < 3 || isSubmitting) return
 
-    console.log('=== handleTaskSubmit START ===')
-    console.log('Current state:', state)
-    console.log('isSubmitting:', isSubmitting)
-
     setIsSubmitting(true)
-    setStateWithDebug(prev => ({ ...prev, isLoading: true, error: null }), 'Setting loading state to true')
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
     
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.log('Timeout triggered - API call took too long')
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         isLoading: false,
         error: 'Превышено время ожидания. Проверьте подключение к интернету и попробуйте еще раз.'
-      }), 'Timeout triggered - setting error state')
+      }))
       setIsSubmitting(false)
-    }, 60000) // 60 second timeout (increased from 30)
+    }, 60000) // 60 second timeout
     
     try {
-      console.log('=== API CONNECTIVITY TEST START ===')
       setAnalysisProgress('Проверяем подключение к API...')
       
       const testRes = await fetch('/api/openai', {
@@ -277,41 +192,30 @@ export default function PersonalWorkflowBuilderLab() {
         })
       })
       
-      console.log('Test API response status:', testRes.status)
-      console.log('Test API response ok:', testRes.ok)
-      
       if (!testRes.ok) {
         const errorText = await testRes.text()
-        console.error('Test API error response:', errorText)
         throw new Error(`Test API call failed: ${testRes.status} - ${errorText}`)
       }
       
       const testData = await testRes.json()
-      console.log('Test API response data:', testData)
       
       if (!testData.content) {
-        console.error('Test API returned no content:', testData)
         throw new Error('Test API returned no content')
       }
       
-      console.log('=== API CONNECTIVITY TEST PASSED ===')
-      console.log('Proceeding with main analysis...')
       setAnalysisProgress('Анализируем ваши задачи...')
       
     } catch (err) {
-      console.error('=== API CONNECTIVITY TEST FAILED ===')
-      console.error('Error details:', err)
       clearTimeout(timeoutId)
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         error: `Ошибка подключения к API: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}. Проверьте настройки API.`,
         isLoading: false 
-      }), 'Setting error state after API connectivity test failure')
+      }))
       setIsSubmitting(false)
       return
     }
     
-    console.log('=== MAIN ANALYSIS START ===')
     setAnalysisProgress('Отправляем запрос на анализ...')
     
     const analysisPrompt = `Вы эксперт по автоматизации рабочих процессов с помощью ИИ-инструментов. Ваша задача - создать автоматизацию, используя ИМЕННО ИИ-технологии (языковые модели, ИИ-функции), а НЕ традиционные инструменты бизнес-аналитики.
@@ -364,10 +268,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
 Не добавляйте никакого текста до или после JSON. Только валидный JSON.`
 
     try {
-      console.log('Submitting analysis prompt...')
-      console.log('Current state before API call:', { isLoading: state.isLoading, error: state.error })
-      
-      // Use the same API format as the working context-window-lab
       const res = await fetch('/api/openai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -378,53 +278,27 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         })
       })
       
-      console.log('Main analysis API response status:', res.status)
-      console.log('Main analysis API response ok:', res.ok)
-      
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        console.error('Main analysis API error response:', err)
         throw new Error(`Main analysis API call failed: ${res.status} - ${err?.details || 'Unknown error'}`)
       }
       
       const data = await res.json()
-      console.log('Main analysis API response data:', data)
-      
       const response = data?.content || 'Ошибка получения ответа'
-      
-      console.log('Analysis response received, length:', response.length)
-      console.log('Response preview:', response.substring(0, 200) + '...')
       
       clearTimeout(timeoutId)
       
-      console.log('Setting state with analysis results and advancing to step 2...')
-      setState(prev => {
-        console.log('Previous state:', prev)
-        const newState = { 
-          ...prev, 
-          analysisResults: response,
-          isLoading: false,
-          error: null,
-          currentStep: 2 as 1 | 2 | 3 | 4 | 5 | 6
-        }
-        console.log('New state:', newState)
-        return newState
-      })
+      setState(prev => ({
+        ...prev, 
+        analysisResults: response,
+        isLoading: false,
+        error: null,
+        currentStep: 2 as 1 | 2 | 3 | 4 | 5 | 6
+      }))
       
-      console.log('State update completed')
       setIsSubmitting(false)
       
-      // Add a small delay to ensure state is properly updated before logging
-      setTimeout(() => {
-        console.log('State after update (delayed check):', {
-          analysisResults: state.analysisResults ? `present (length: ${state.analysisResults.length})` : 'null',
-          currentStep: state.currentStep
-        })
-      }, 100)
-      
     } catch (err) {
-      console.error('=== MAIN ANALYSIS ERROR ===')
-      console.error('Error details:', err)
       clearTimeout(timeoutId)
       
       // Provide fallback response for testing
@@ -447,12 +321,12 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
 
 `
       
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         analysisResults: fallbackResponse,
         isLoading: false,
         error: null
-      }), 'Setting state with fallback analysis results')
+      }))
       setIsSubmitting(false)
     }
   }
@@ -533,51 +407,49 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       const data = await res.json()
       const response = data?.content || 'Ошибка получения ответа'
       
-      console.log('About to set state with workflow generation results...')
-      console.log('Response content length:', response.length)
-      console.log('Response preview:', response.substring(0, 200) + '...')
+      // Clear old recommendations and plan when workflow is regenerated
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('pwb_lab_tool_recs')
+        localStorage.removeItem('pwb_lab_impl_plan')
+      }
       
-      setState(prev => {
-        console.log('Previous state before workflow update:', prev)
-        const newState = { 
-          ...prev, 
-          generatedWorkflow: response,
-          isLoading: false,
-          currentStep: 4 as 1 | 2 | 3 | 4 | 5 | 6
-        }
-        console.log('New state for workflow update:', newState)
-        return newState
-      })
-      
-      console.log('Workflow generation completed and advanced to step 4')
-      console.log('Generated workflow content length:', response.length)
-      console.log('Generated workflow preview:', response.substring(0, 200) + '...')
-      
-      // Add a small delay to ensure state is properly updated before logging
-      setTimeout(() => {
-        console.log('State after workflow generation (delayed check):', {
-          generatedWorkflow: state.generatedWorkflow ? `present (length: ${state.generatedWorkflow.length})` : 'null',
-          currentStep: state.currentStep
-        })
-      }, 100)
+      setState(prev => ({
+        ...prev, 
+        generatedWorkflow: response,
+        toolRecommendations: null, // Clear old recommendations
+        implementationPlan: null, // Clear old plan
+        isLoading: false,
+        currentStep: 4 as 1 | 2 | 3 | 4 | 5 | 6
+      }))
       
     } catch (err) {
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         error: 'Ошибка генерации workflow',
         isLoading: false 
-      }), 'Setting error state after workflow generation failure')
+      }))
     }
   }
 
   const handleToolRecommendations = async () => {
     if (!state.selectedTask) return
 
-    setStateWithDebug(prev => ({ ...prev, isLoading: true }), 'Setting loading state for tool recommendations')
+    setState(prev => ({ ...prev, isLoading: true }))
     
-    const toolPrompt = `На основе этого workflow: ${state.generatedWorkflow}
+    const systemPrompt = `Ты эксперт по автоматизации рабочих процессов с помощью ИИ-инструментов. Твоя задача - рекомендовать ТОЛЬКО ИИ-инструменты (языковые модели, ИИ-функции), а НЕ традиционные инструменты бизнес-аналитики.
 
-Порекомендуйте ТОЛЬКО ИИ-инструменты для автоматизации. Исключите традиционные BI-инструменты.
+КРИТИЧЕСКИ ВАЖНО:
+- НИКОГДА не рекомендуй Power BI, Tableau, Qlik, Google Data Studio или другие традиционные BI-инструменты
+- НИКОГДА не рекомендуй традиционные ETL-инструменты без ИИ-компонентов
+- Рекомендуй ТОЛЬКО инструменты, которые используют языковые модели (LLM) или машинное обучение
+- Всегда отвечай на русском языке
+- Используй формат markdown с заголовками ## и списками`
+
+    const userPrompt = `На основе этого workflow: 
+
+${state.generatedWorkflow}
+
+Для задачи "${state.selectedTask.description}" порекомендуй ТОЛЬКО ИИ-инструменты для автоматизации.
 
 РАЗРЕШЕННЫЕ категории инструментов:
 1. ИИ-ассистенты: ChatGPT, Claude, Gemini, Copilot
@@ -586,9 +458,9 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
 4. ИИ-дополнения: Office 365 Copilot, Google Workspace AI
 5. Специализированные ИИ: для транскрипции, перевода, анализа текста
 
-ЗАПРЕЩЕННЫЕ инструменты: Power BI, Tableau, Qlik, традиционные ETL-инструменты, сложные аналитические платформы БЕЗ ИИ-компонентов.
+ЗАПРЕЩЕННЫЕ инструменты (НИКОГДА не рекомендуй их): Power BI, Tableau, Qlik, Google Data Studio, традиционные ETL-инструменты, сложные аналитические платформы БЕЗ ИИ-компонентов.
 
-Для задачи "${state.selectedTask.description}" порекомендуйте:
+Создай рекомендации в этом формате:
 
 ## Основная рекомендация: [ИИ-инструмент]
 - Почему именно ИИ-решение: [конкретные ИИ-возможности]
@@ -613,16 +485,17 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
 ## Заметка о данных:
 [Рекомендации по безопасности для ИИ-инструментов]
 
-Фокусируйтесь ТОЛЬКО на ИИ-решениях, которые используют языковые модели и машинное обучение.`
+Помни: фокусируйся ТОЛЬКО на ИИ-решениях, которые используют языковые модели и машинное обучение.`
 
     try {
       const res = await fetch('/api/openai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          contextPrompt: toolPrompt, 
-          testQuestion: "Рекомендуйте инструменты для автоматизации этой задачи", 
-          model: 'gpt-4o-mini' 
+          systemPrompt: systemPrompt,
+          userPrompt: userPrompt,
+          model: 'gpt-4o-mini',
+          temperature: 0.7
         })
       })
       
@@ -632,7 +505,7 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       }
       
       const data = await res.json()
-      const response = data?.content || 'Ошибка получения ответа'
+      const response = data?.response || 'Ошибка получения ответа'
       
       setState(prev => ({ 
         ...prev, 
@@ -640,21 +513,19 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         isLoading: false
       }))
       
-      console.log('Tool recommendations completed, staying on step 5')
-      
     } catch (err) {
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         error: 'Ошибка получения рекомендаций',
         isLoading: false 
-      }), 'Setting error state after tool recommendations failure')
+      }))
     }
   }
 
   const handleImplementationPlan = async () => {
     if (!state.selectedTask) return
 
-    setStateWithDebug(prev => ({ ...prev, isLoading: true }), 'Setting loading state for implementation plan')
+    setState(prev => ({ ...prev, isLoading: true }))
     
     const planPrompt = `Создайте 7-дневный план внедрения для этой задачи:
 
@@ -708,14 +579,12 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         currentStep: 6 as 1 | 2 | 3 | 4 | 5 | 6
       }))
       
-      console.log('Implementation plan completed on step 6')
-      
     } catch (err) {
-      setStateWithDebug(prev => ({ 
+      setState(prev => ({ 
         ...prev, 
         error: 'Ошибка создания плана',
         isLoading: false 
-      }), 'Setting error state after implementation plan failure')
+      }))
     }
   }
 
@@ -785,8 +654,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       // Extract only the JSON portion
       jsonString = jsonString.substring(jsonStart, jsonEnd + 1)
       
-      console.log('Extracted JSON string:', jsonString.substring(0, 200) + '...')
-      
       // Parse the JSON
       const jsonData = JSON.parse(jsonString)
       
@@ -802,41 +669,38 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         .replace(/\(task\d+\)/gi, '') // Remove English task references like (task2)
         .trim()
       
-      console.log('Original recommendation text:', recommendationText)
-      console.log('Cleaned recommendation text:', cleanRecommendation)
-      
       return (
         <div className="space-y-6">
-          <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+          <div className="bg-blue-50/50 dark:bg-blue-950/15 border-l-4 border-blue-300/60 dark:border-blue-700/40 p-4 rounded-r-lg">
             <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
               📊 Анализ потенциала автоматизации
             </h3>
-            <p className="text-blue-800 dark:text-blue-200">
+            <p className="text-blue-800/80 dark:text-blue-200/80">
               Я проанализировал ваши задачи и оценил их по 5 критериям (максимум 25 баллов).
             </p>
           </div>
           
-          <div className="bg-amber-50 dark:bg-amber-950/20 border-l-4 border-amber-500 p-4 rounded-r-lg">
+          <div className="bg-amber-50/40 dark:bg-amber-950/12 border-l-4 border-amber-300/50 dark:border-amber-700/30 p-4 rounded-r-lg">
             <h4 className="text-lg font-semibold text-amber-900 dark:text-amber-100 mb-2">
               🎯 Выберите задачу для автоматизации
             </h4>
-            <p className="text-amber-800 dark:text-amber-200">
+            <p className="text-amber-800/70 dark:text-amber-200/70">
               Кликните на задачу, которую хотите автоматизировать. Рекомендуется выбрать задачу с наивысшим баллом.
             </p>
           </div>
           
           {Object.entries(jsonData).map(([taskKey, taskData]: [string, any]) => (
-            <div key={taskKey} className={`border rounded-lg p-4 cursor-pointer transition-all ${
+            <div key={taskKey} className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
               state.selectedTask?.description === taskData.name 
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20' 
-                : 'bg-gray-50 dark:bg-gray-900/20 hover:border-gray-300'
+                ? 'border-blue-400/60 dark:border-blue-600/50 bg-blue-50/40 dark:bg-blue-950/20 shadow-sm' 
+                : 'bg-card/50 dark:bg-card/30 border-border/50 hover:border-blue-300/40 dark:hover:border-blue-700/30'
             }`} onClick={() => setState(prev => ({ ...prev, selectedTask: { 
               description: taskData.name, 
               frequency: 'регулярно', 
               duration: 'зависит от задачи' 
             }}))}>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h4 className="text-lg font-semibold text-foreground">
                   {taskData.name}
                 </h4>
                 {state.selectedTask?.description === taskData.name && (
@@ -849,24 +713,24 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Частота:</span>
-                    <span className="font-medium">{taskData.scores.frequency}/5</span>
+                    <span className="text-sm text-muted-foreground">Частота:</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{taskData.scores.frequency}/5</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Предсказуемость:</span>
-                    <span className="font-medium">{taskData.scores.predictability}/5</span>
+                    <span className="text-sm text-muted-foreground">Предсказуемость:</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{taskData.scores.predictability}/5</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Интенсивность данных:</span>
-                    <span className="font-medium">{taskData.scores.languageIntensity}/5</span>
+                    <span className="text-sm text-muted-foreground">Интенсивность данных:</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{taskData.scores.languageIntensity}/5</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Влияние на время:</span>
-                    <span className="font-medium">{taskData.scores.timeImpact}/5</span>
+                    <span className="text-sm text-muted-foreground">Влияние на время:</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{taskData.scores.timeImpact}/5</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Возможность автоматизации:</span>
-                    <span className="font-medium">{taskData.scores.feasibility}/5</span>
+                    <span className="text-sm text-muted-foreground">Возможность автоматизации:</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{taskData.scores.feasibility}/5</span>
                   </div>
                 </div>
                 
@@ -874,20 +738,20 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
                   <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {taskData.totalScore}/25
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="text-sm text-muted-foreground">
                     Общий балл
                   </div>
                 </div>
               </div>
               
               <div className="space-y-3">
-                <div>
-                  <h5 className="font-medium text-green-700 dark:text-green-300 mb-1">✅ Преимущества:</h5>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{taskData.strengths}</p>
+                <div className="bg-emerald-50/30 dark:bg-emerald-950/15 p-3 rounded-md border border-emerald-200/30 dark:border-emerald-800/20">
+                  <h5 className="font-medium text-emerald-800 dark:text-emerald-200 mb-1">✅ Преимущества:</h5>
+                  <p className="text-sm text-emerald-700/80 dark:text-emerald-300/80">{taskData.strengths}</p>
                 </div>
-                <div>
-                  <h5 className="font-medium text-amber-700 dark:text-amber-300 mb-1">⚠️ Сложности:</h5>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{taskData.challenges}</p>
+                <div className="bg-amber-50/30 dark:bg-amber-950/15 p-3 rounded-md border border-amber-200/30 dark:border-amber-800/20">
+                  <h5 className="font-medium text-amber-800 dark:text-amber-200 mb-1">⚠️ Сложности:</h5>
+                  <p className="text-sm text-amber-700/80 dark:text-amber-300/80">{taskData.challenges}</p>
                 </div>
               </div>
             </div>
@@ -898,17 +762,13 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       )
     } catch (error) {
       // Fallback to raw display if JSON parsing fails
-      console.warn('Failed to parse JSON, falling back to raw display:', error)
-      console.log('Raw response that failed to parse:', results)
-      
-      // Try to provide a more helpful fallback
       return (
         <div className="space-y-6">
-          <div className="bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500 p-4 rounded-r-lg">
+          <div className="bg-red-50/50 dark:bg-red-950/15 border-l-4 border-red-300/60 dark:border-red-700/40 p-4 rounded-r-lg">
             <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
               ⚠️ Ошибка анализа
             </h3>
-            <p className="text-red-800 dark:text-red-200">
+            <p className="text-red-800/80 dark:text-red-200/80">
               Не удалось обработать результаты анализа. Пожалуйста, попробуйте еще раз.
             </p>
           </div>
@@ -967,10 +827,10 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       {/* Progress Bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
-          <span>Шаг {state.currentStep} из 6</span>
-          <span>{Math.round(progress)}%</span>
+          <span className="text-muted-foreground">Шаг {state.currentStep} из 6</span>
+          <span className="text-blue-700 dark:text-blue-300 font-medium">{Math.round(progress)}%</span>
         </div>
-        <Progress value={progress} className="w-full" />
+        <Progress value={progress} className="w-full h-2" />
       </div>
 
       {/* Scenario Panel */}
@@ -989,9 +849,9 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
           
           <div className="space-y-4">
             {state.userTasks.map((task, index) => (
-              <div key={index} className="rounded-xl border border-border/30 bg-card/50 text-card-foreground shadow-sm p-4 space-y-3">
+              <div key={index} className="rounded-xl border border-blue-200/30 dark:border-blue-800/20 bg-blue-50/20 dark:bg-blue-950/10 text-card-foreground shadow-sm p-4 space-y-3">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-medium text-foreground">Задача {index + 1}</h3>
+                  <h3 className="font-medium text-blue-900 dark:text-blue-100">Задача {index + 1}</h3>
                   {state.userTasks.length > 1 && (
                     <Button
                       variant="outline"
@@ -1056,15 +916,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
           </div>
           
           <div className="mt-6 flex justify-end">
-            {/* Debug info */}
-            <div className="mr-4 text-sm text-gray-500">
-              <div>Задач: {state.userTasks.length}/3</div>
-              <div>Валидных: {state.userTasks.filter(task => 
-                task.description.trim().length > 5 && 
-                task.frequency.trim().length > 0 && 
-                task.duration.trim().length > 0
-              ).length}/3</div>
-            </div>
             <Button 
               onClick={handleTaskSubmit}
               disabled={!canProceedToStep2 || state.isLoading}
@@ -1085,15 +936,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Шаг 2: Анализ результатов</h2>
           
-          {/* Debug info */}
-          <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-            <div>Debug: currentStep = {state.currentStep}</div>
-            <div>Debug: analysisResults exists = {state.analysisResults ? 'Yes' : 'No'}</div>
-            <div>Debug: analysisResults length = {state.analysisResults ? state.analysisResults.length : 'N/A'}</div>
-            <div>Debug: isLoading = {state.isLoading ? 'Yes' : 'No'}</div>
-            <div>Debug: error = {state.error || 'None'}</div>
-          </div>
-          
           {state.analysisResults ? (
             <div className="space-y-4">
               {formatAnalysisResults(state.analysisResults)}
@@ -1111,8 +953,8 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
-              <p>Анализируем ваши задачи...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 border-t-transparent mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Анализируем ваши задачи...</p>
             </div>
           )}
         </Card>
@@ -1122,23 +964,12 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Шаг 3: Дизайн workflow</h2>
           
-          {/* Debug info */}
-          <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-            <div>Debug: currentStep = {state.currentStep}</div>
-            <div>Debug: selectedTask = {state.selectedTask ? 'Yes' : 'No'}</div>
-            <div>Debug: inputs = {state.workflowInputs.inputs ? 'Yes' : 'No'}</div>
-            <div>Debug: outputs = {state.workflowInputs.outputs ? 'Yes' : 'No'}</div>
-            <div>Debug: audience = {state.workflowInputs.audience ? 'Yes' : 'No'}</div>
-            <div>Debug: canProceedToStep4 = {canProceedToStep4 ? 'Yes' : 'No'}</div>
-            <div>Debug: isLoading = {state.isLoading ? 'Yes' : 'No'}</div>
-          </div>
-          
           {state.selectedTask && (
-            <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+            <div className="bg-blue-50/50 dark:bg-blue-950/15 border-l-4 border-blue-300/60 dark:border-blue-700/40 p-4 rounded-r-lg mb-6">
               <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 🎯 Выбранная задача
               </h3>
-              <p className="text-blue-800 dark:text-blue-200">
+              <p className="text-blue-800/80 dark:text-blue-200/80">
                 <strong>{state.selectedTask.description}</strong>
               </p>
             </div>
@@ -1233,35 +1064,10 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Шаг 4: Сгенерированный workflow</h2>
           
-          {/* Debug info */}
-          <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-            <div>Debug: currentStep = {state.currentStep}</div>
-            <div>Debug: generatedWorkflow exists = {state.generatedWorkflow ? 'Yes' : 'No'}</div>
-            <div>Debug: generatedWorkflow length = {state.generatedWorkflow ? state.generatedWorkflow.length : 'N/A'}</div>
-            <div>Debug: isLoading = {state.isLoading ? 'Yes' : 'No'}</div>
-            <div>Debug: error = {state.error || 'None'}</div>
-            <div className="mt-2">
-              <Button 
-                                  onClick={() => {
-                    localStorage.removeItem('pwb_lab_workflow')
-                    localStorage.removeItem('pwb_lab_step')
-                    localStorage.removeItem('pwb_lab_analysis')
-                    localStorage.removeItem('pwb_lab_tool_recs')
-                    localStorage.removeItem('pwb_lab_impl_plan')
-                    window.location.reload()
-                  }}
-                variant="outline"
-                size="sm"
-              >
-                Clear localStorage & Restart
-              </Button>
-            </div>
-          </div>
-          
           {state.generatedWorkflow ? (
             <div className="space-y-4">
-              <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <p className="text-blue-800 dark:text-blue-200">
+              <div className="bg-emerald-600/90 dark:bg-emerald-950/30 border-l-4 border-emerald-400 dark:border-emerald-700/40 p-4 rounded-r-lg">
+                <p className="text-white dark:text-emerald-50">
                   <strong>Отлично!</strong> На основе ваших требований, вот ваш индивидуальный ИИ-workflow.
                 </p>
               </div>
@@ -1286,8 +1092,8 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
-              <p>Генерируем ваш workflow...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 dark:border-emerald-400 border-t-transparent mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Генерируем ваш workflow...</p>
             </div>
           )}
         </Card>
@@ -1296,15 +1102,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
       {state.currentStep === 5 && (
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Шаг 5: Рекомендации инструментов</h2>
-          
-          {/* Debug info */}
-          <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-            <div>Debug: currentStep = {state.currentStep}</div>
-            <div>Debug: toolRecommendations exists = {state.toolRecommendations ? 'Yes' : 'No'}</div>
-            <div>Debug: toolRecommendations length = {state.toolRecommendations ? state.toolRecommendations.length : 'N/A'}</div>
-            <div>Debug: isLoading = {state.isLoading ? 'Yes' : 'No'}</div>
-            <div>Debug: error = {state.error || 'None'}</div>
-          </div>
           
           {state.toolRecommendations ? (
             <div className="space-y-4">
@@ -1353,15 +1150,6 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Шаг 6: План внедрения и экспорт</h2>
           
-          {/* Debug info */}
-          <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-            <div>Debug: currentStep = {state.currentStep}</div>
-            <div>Debug: implementationPlan exists = {state.implementationPlan ? 'Yes' : 'No'}</div>
-            <div>Debug: implementationPlan length = {state.implementationPlan ? state.implementationPlan.length : 'N/A'}</div>
-            <div>Debug: isLoading = {state.isLoading ? 'Yes' : 'No'}</div>
-            <div>Debug: error = {state.error || 'None'}</div>
-          </div>
-          
           {state.implementationPlan ? (
             <div className="space-y-6">
               <div className="prose dark:prose-invert max-w-none">
@@ -1371,11 +1159,11 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
                 />
               </div>
               
-              <div className="bg-green-50 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded-r-lg">
-                <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+              <div className="bg-emerald-50/50 dark:bg-emerald-950/15 border-l-4 border-emerald-300/60 dark:border-emerald-700/40 p-4 rounded-r-lg">
+                <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100 mb-2">
                   🎉 Поздравляем! Вы только что спроектировали ваш первый ИИ-workflow!
                 </h3>
-                <p className="text-green-700 dark:text-green-300">
+                <p className="text-emerald-800/80 dark:text-emerald-200/80">
                   У вас есть конкретный план действий, который можно внедрить на этой неделе.
                 </p>
               </div>
@@ -1416,7 +1204,7 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
 
       {/* Error Display */}
       {state.error && (
-        <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-950/20">
+        <Card className="p-4 border-red-200/50 dark:border-red-800/30 bg-red-50/40 dark:bg-red-950/15">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 text-red-800 dark:text-red-200">
               <AlertCircle className="w-5 h-5" />

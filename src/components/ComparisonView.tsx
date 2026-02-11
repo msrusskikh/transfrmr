@@ -44,7 +44,7 @@ const processInlineMarkdown = (text: string) => {
       parts.push(text.slice(currentIndex, codeMatch.index))
     }
     parts.push(
-      <code key={`code-${currentIndex}`} className="bg-gray-200 px-1 py-0.5 rounded text-sm font-mono">
+      <code key={`code-${currentIndex}`} className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-1 py-0.5 rounded text-sm font-mono">
         {codeMatch[1]}
       </code>
     )
@@ -61,7 +61,7 @@ const processInlineMarkdown = (text: string) => {
 
 // Helper function to format AI response text with proper structure
 const formatResponseText = (text: string) => {
-  if (!text) return <div className="text-gray-500 italic">Ответ отсутствует</div>;
+  if (!text) return <div className="text-gray-500 dark:text-gray-400 italic">Ответ отсутствует</div>;
   
   return (
     <div className="prose prose-sm max-w-none">
@@ -89,24 +89,24 @@ const formatResponseText = (text: string) => {
         let content: string | JSX.Element | (string | JSX.Element)[] = trimmedLine
         
         if (isHeading1) {
-          className = 'text-xl font-bold text-gray-900 mb-4 mt-6 first:mt-0'
+          className = 'text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 mt-6 first:mt-0'
           content = trimmedLine.replace(/^#\s/, '')
         } else if (isHeading2) {
-          className = 'text-lg font-bold text-gray-900 mb-3 mt-5'
+          className = 'text-lg font-bold text-gray-900 dark:text-gray-100 mb-3 mt-5'
           content = trimmedLine.replace(/^##\s/, '')
         } else if (isHeading3) {
-          className = 'text-base font-bold text-gray-900 mb-3 mt-4'
+          className = 'text-base font-bold text-gray-900 dark:text-gray-100 mb-3 mt-4'
           content = trimmedLine.replace(/^###\s/, '')
         } else if (isBulletWithBold) {
           // Treat bullet + bold as a bold heading, remove the bullet marker and bold markers
-          className = 'text-base font-bold text-gray-900 mb-3 mt-4'
+          className = 'text-base font-bold text-gray-900 dark:text-gray-100 mb-3 mt-4'
           content = trimmedLine.replace(/^[\•\-\*]\s/, '').replace(/\*\*(.*?)\*\*/g, '$1')
         } else if (isNumberedList) {
           className = 'ml-6 mb-2 flex items-start'
           const listContent = trimmedLine.replace(/^\d+\.\s/, '')
           content = (
             <>
-              <span className="text-gray-600 font-medium mr-2 flex-shrink-0">
+              <span className="text-gray-600 dark:text-gray-400 font-medium mr-2 flex-shrink-0">
                 {trimmedLine.match(/^\d+\./)?.[0]}
               </span>
               <span>{processInlineMarkdown(listContent)}</span>
@@ -117,7 +117,7 @@ const formatResponseText = (text: string) => {
           const bulletContent = trimmedLine.replace(/^[\•\-\*]\s/, '')
           content = (
             <>
-              <span className="text-gray-600 mr-2 flex-shrink-0">•</span>
+              <span className="text-gray-600 dark:text-gray-400 mr-2 flex-shrink-0">•</span>
               <span>{processInlineMarkdown(bulletContent)}</span>
             </>
           )
@@ -126,7 +126,7 @@ const formatResponseText = (text: string) => {
           const bulletContent = trimmedLine.replace(/^\s+[\•\-\*]\s/, '')
           content = (
             <>
-              <span className="text-gray-600 mr-2 flex-shrink-0">◦</span>
+              <span className="text-gray-600 dark:text-gray-400 mr-2 flex-shrink-0">◦</span>
               <span>{processInlineMarkdown(bulletContent)}</span>
             </>
           )
@@ -184,27 +184,27 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ rounds }) => {
   };
   
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-2">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
         {COMPARISON_CONTENT.title}
       </h2>
-      <p className="text-gray-600 mb-6">{COMPARISON_CONTENT.subtitle}</p>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">{COMPARISON_CONTENT.subtitle}</p>
       
       {/* Table view */}
       <div className="overflow-x-auto mb-8">
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-300 px-4 py-2 text-left">
+            <tr className="bg-gray-50 dark:bg-gray-700">
+              <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-900 dark:text-gray-100">
                 {COMPARISON_CONTENT.headers.round}
               </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
+              <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-900 dark:text-gray-100">
                 {COMPARISON_CONTENT.headers.promptQuality}
               </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
+              <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-900 dark:text-gray-100">
                 {COMPARISON_CONTENT.headers.outputQuality}
               </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
+              <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left text-gray-900 dark:text-gray-100">
                 {COMPARISON_CONTENT.headers.executiveReadiness}
               </th>
             </tr>
@@ -215,39 +215,39 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ rounds }) => {
               if (!roundData) return null;
               
               return (
-                <tr key={roundNum}>
-                  <td className="border border-gray-300 px-4 py-2 font-medium">
+                <tr key={roundNum} className="bg-white dark:bg-gray-800">
+                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 font-medium text-gray-900 dark:text-gray-100">
                     {roundNum}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      getQualityColor(roundData.qualityScore) === 'red' ? 'bg-red-100 text-red-800' :
-                      getQualityColor(roundData.qualityScore) === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                      getQualityColor(roundData.qualityScore) === 'blue' ? 'bg-blue-100 text-blue-800' :
-                      getQualityColor(roundData.qualityScore) === 'green' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
+                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium border bg-muted/60 ${
+                      getQualityColor(roundData.qualityScore) === 'red' ? 'border-red-400/70 text-red-700 dark:text-red-300' :
+                      getQualityColor(roundData.qualityScore) === 'yellow' ? 'border-amber-400/70 text-amber-700 dark:text-amber-300' :
+                      getQualityColor(roundData.qualityScore) === 'blue' ? 'border-sky-400/70 text-sky-700 dark:text-sky-300' :
+                      getQualityColor(roundData.qualityScore) === 'green' ? 'border-emerald-400/70 text-emerald-700 dark:text-emerald-300' :
+                      'border-border/60 text-muted-foreground'
                     }`}>
                       {getQualityLabel(roundData.qualityScore)}
                     </span>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      getQualityColor(roundData.qualityScore) === 'red' ? 'bg-red-100 text-red-800' :
-                      getQualityColor(roundData.qualityScore) === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                      getQualityColor(roundData.qualityScore) === 'blue' ? 'bg-blue-100 text-blue-800' :
-                      getQualityColor(roundData.qualityScore) === 'green' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
+                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium border bg-muted/60 ${
+                      getQualityColor(roundData.qualityScore) === 'red' ? 'border-red-400/70 text-red-700 dark:text-red-300' :
+                      getQualityColor(roundData.qualityScore) === 'yellow' ? 'border-amber-400/70 text-amber-700 dark:text-amber-300' :
+                      getQualityColor(roundData.qualityScore) === 'blue' ? 'border-sky-400/70 text-sky-700 dark:text-sky-300' :
+                      getQualityColor(roundData.qualityScore) === 'green' ? 'border-emerald-400/70 text-emerald-700 dark:text-emerald-300' :
+                      'border-border/60 text-muted-foreground'
                     }`}>
                       {getQualityLabel(roundData.qualityScore)}
                     </span>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      getReadinessColor(roundNum) === 'red' ? 'bg-red-100 text-red-800' :
-                      getReadinessColor(roundNum) === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                      getReadinessColor(roundNum) === 'blue' ? 'bg-blue-100 text-blue-800' :
-                      getReadinessColor(roundNum) === 'green' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
+                  <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium border bg-muted/60 ${
+                      getReadinessColor(roundNum) === 'red' ? 'border-red-400/70 text-red-700 dark:text-red-300' :
+                      getReadinessColor(roundNum) === 'yellow' ? 'border-amber-400/70 text-amber-700 dark:text-amber-300' :
+                      getReadinessColor(roundNum) === 'blue' ? 'border-sky-400/70 text-sky-700 dark:text-sky-300' :
+                      getReadinessColor(roundNum) === 'green' ? 'border-emerald-400/70 text-emerald-700 dark:text-emerald-300' :
+                      'border-border/60 text-muted-foreground'
                     }`}>
                       {getReadinessLabel(roundNum)}
                     </span>
@@ -266,21 +266,21 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ rounds }) => {
           if (!roundData) return null;
           
           return (
-            <div key={roundNum} className="border rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <div key={roundNum} className="border dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Раунд {roundNum} - {getQualityLabel(roundData.qualityScore)}
               </h3>
               
               <div className="mb-3">
-                <h4 className="text-sm font-medium text-gray-700 mb-1">Промпт:</h4>
-                <div className="bg-gray-50 p-2 rounded text-sm font-mono">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Промпт:</h4>
+                <div className="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-2 rounded text-sm font-mono">
                   {roundData.userPrompt || 'Промпт отсутствует'}
                 </div>
               </div>
               
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-1">Ответ ИИ:</h4>
-                <div className="bg-blue-50 p-3 rounded">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ответ ИИ:</h4>
+                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
                   {formatResponseText(roundData.aiResponse)}
                 </div>
               </div>

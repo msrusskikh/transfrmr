@@ -82,9 +82,7 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
                   "flex items-start space-x-2 rounded-md px-3 py-2 transition-all duration-200 group",
                   // Apply dimming when not accessible and not in dev mode
                   !hasAccess && !isDevMode && "opacity-50 pointer-events-none",
-                  // Apply hover effects only when accessible
-                  hasAccess && "hover:text-foreground",
-                  isActive && "bg-accent text-foreground"
+                  isActive && "bg-accent"
                 )}
               >
                 <div className={cn(
@@ -97,8 +95,14 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
                 )}></div>
                 <span className="relative overflow-hidden max-w-[180px] flex-1">
                   <span className={cn(
-                    "text-xs font-medium leading-tight block",
-                    hasAccess ? "text-foreground" : "text-foreground/50"
+                    "text-xs font-normal leading-tight block transition-colors",
+                    isCompleted 
+                      ? "!text-foreground" 
+                      : hasAccess 
+                        ? "!text-foreground/50 group-hover:!text-foreground/70" 
+                        : "!text-foreground/30",
+                    isActive && isCompleted && "!text-foreground",
+                    isActive && !isCompleted && "!text-foreground/80"
                   )}>{section.title}</span>
                 </span>
               </Link>

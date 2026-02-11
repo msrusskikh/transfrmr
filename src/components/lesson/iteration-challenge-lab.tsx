@@ -71,7 +71,10 @@ ${CUSTOMER_FEEDBACK.join('\n')}
       })
 
       if (!response.ok) {
-        throw new Error('API request failed')
+        const errorData = await response.json().catch(() => ({}))
+        const errorDetails = errorData.error || errorData.details || `HTTP ${response.status}`
+        console.error('API Error:', errorDetails)
+        throw new Error(errorDetails)
       }
 
       const data = await response.json()
@@ -327,14 +330,14 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2 text-foreground">
                 Ваш промпт для ИИ:
               </label>
               <textarea
                 value={currentPrompt}
                 onChange={(e) => handlePromptChange(e.target.value)}
                 placeholder={UI_MESSAGES.placeholders.promptInput}
-                className="w-full h-32 p-3 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-32 p-3 border border-input bg-background text-foreground rounded-lg resize-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
             </div>
 
@@ -355,13 +358,13 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
                     
                     if (!roundElements.includes(key)) return null;
                     
-                    return (
+                return (
                       <span
                         key={key}
-                        className={`px-2 py-1 rounded text-xs ${
+                        className={`px-2 py-1 rounded text-xs border ${
                           frameworkFeedback.detectedElements.includes(key)
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-600'
+                            ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-900 dark:text-emerald-100'
+                            : 'bg-muted/60 dark:bg-gray-800/80 border-border/60 text-muted-foreground'
                         }`}
                       >
                         {element.name}
@@ -371,7 +374,7 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
                 </div>
                 
                 {frameworkFeedback.suggestions.length > 0 && (
-                  <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded">
+                  <div className="text-sm text-amber-700 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-950/20 p-2 rounded border border-amber-200/70 dark:border-amber-900/60">
                     <AlertCircle className="inline h-4 w-4 mr-1" />
                     {frameworkFeedback.suggestions.join(', ')}
                   </div>
@@ -426,15 +429,15 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
       {/* AI Response */}
       {currentResponse && (
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">ОТВЕТ ИИ</h3>
             <div className="flex items-center space-x-2">
               <span className="text-sm text-muted-foreground">Качество:</span>
-              <span className={`px-2 py-1 rounded text-sm font-medium ${
-                state.currentRound === 1 ? 'bg-red-100 text-red-800' :
-                state.currentRound === 2 ? 'bg-yellow-100 text-yellow-800' :
-                state.currentRound === 3 ? 'bg-blue-100 text-blue-800' :
-                'bg-green-100 text-green-800'
+              <span className={`px-2 py-1 rounded text-xs font-medium border bg-muted/60 dark:bg-gray-900/60 ${
+                state.currentRound === 1 ? 'border-red-400/70 text-red-300' :
+                state.currentRound === 2 ? 'border-amber-400/70 text-amber-300' :
+                state.currentRound === 3 ? 'border-sky-400/70 text-sky-300' :
+                'border-emerald-400/70 text-emerald-300'
               }`}>
                 {state.currentRound === 1 ? 'Не очень' :
                  state.currentRound === 2 ? 'Лучше' :
@@ -536,7 +539,7 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
           </div>
 
           {error && (
-            <div className="text-red-600 bg-red-50 p-3 rounded mb-4">
+            <div className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 p-3 rounded mb-4">
               <XCircle className="inline h-4 w-4 mr-1" />
               {error}
             </div>
@@ -546,7 +549,7 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
             {state.currentRound < 4 && (
               <Button 
                 onClick={handleNextRound}
-                className="bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-900 dark:text-amber-100"
+                className="px-8"
               >
                 {UI_MESSAGES.buttons.nextRound}
               </Button>

@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Star, Send, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface CourseCompletionPopupProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
   onDownloadCertificate,
   onViewNextCourse 
 }) => {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewData, setReviewData] = useState<ReviewData>({
@@ -434,7 +436,7 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
                 Поздравляем!
               </h1>
               <p style={styles.subtitle}>
-                Вы успешно освоили основы искусственного интеллекта. Теперь вперед – использовать знания и делать красиво 💖
+                Вы успешно освоили основы искусственного интеллекта. Теперь вперед – использовать знания и делиться с коллегами 💖
               </p>
               
               <div style={styles.stats}>
@@ -456,16 +458,16 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
                 <button 
                   style={{...styles.btn, ...styles.btnPrimary}} 
                   className="btn-primary btn-mobile"
-                  onClick={handleDownloadCertificate}
+                  onClick={handleReviewClick}
                 >
-                  Порекомендовать другу
+                  Поделиться мнением
                 </button>
                 <button 
                   style={{...styles.btn, ...styles.btnSecondary}} 
                   className="btn-secondary btn-mobile"
-                  onClick={handleReviewClick}
+                  onClick={() => router.push('/learn')}
                 >
-                  Оставить отзыв
+                  На главную
                 </button>
               </div>
             </>
