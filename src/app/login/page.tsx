@@ -114,12 +114,6 @@ function LoginForm() {
               {loading ? 'Вход...' : 'Войти'}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">Нет аккаунта? </span>
-            <Link href="/signup" className="text-primary hover:underline">
-              Зарегистрироваться
-            </Link>
-          </div>
           <div className="mt-2 text-center">
             <Link href="/" className="text-sm text-muted-foreground hover:underline">
               Вернуться на главную

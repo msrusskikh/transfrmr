@@ -52,12 +52,12 @@ function ModuleItem({ module, isExpanded, onToggle, onMobileMenuClose }: ModuleI
       </Button>
       
       {/* Progress indicator */}
-      <div className="ml-6 mt-2">
+      <div className="px-4 mt-2">
         <div className="w-full bg-muted/30 rounded-full h-1.5">
-                      <div 
-              className="h-1.5 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${progress}%`, backgroundColor: '#0d9488' }}
-            />
+          <div 
+            className="h-1.5 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%`, backgroundColor: '#0d9488' }}
+          />
         </div>
       </div>
       

@@ -111,7 +111,7 @@ const conversationHistory: ConversationExchange[] = [
   {
     id: 10,
     human: "Команде разработки нужно знать — стоит ли планировать большое launch-событие?",
-    ai: "Абсолютно! Launch-событие создаст ноестную волну и продемонстрирует возможности вашего продукта. Я предлагаю виртуальное событие для управления расходами и охвата более широкой аудитории."
+    ai: "Абсолютно! Launch-событие создаст новостную волну и продемонстрирует возможности вашего продукта. Я предлагаю виртуальное событие для управления расходами и охвата более широкой аудитории."
   },
   {
     id: 11,
@@ -350,7 +350,7 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
                   </div>
                   <div className="flex-1 space-y-2">
                     <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Человек:</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Вы:</p>
                       <p className="text-sm text-gray-700 dark:text-gray-300">{exchange.human}</p>
                     </div>
                     <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
@@ -1035,7 +1035,7 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <h4 className="font-medium mb-2">⏰ Таймер распада контекста</h4>
               <p className="text-sm text-muted-foreground">
-              После 10+ обменов считайте, что ИИ забыл ваш первоначальный бриф — время для обновления
+              После 30+ обменов считайте, что ИИ забыл ваш первоначальный бриф — время для обновления
               </p>
             </div>
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">

@@ -5,7 +5,7 @@
 export function getVerificationEmailTemplate(
   verificationUrl: string
 ): { subject: string; html: string } {
-  const subject = 'Подтвердите вашу почту — Трансформер'
+  const subject = 'Подтвердите вашу почту'
 
   const html = `
 <!DOCTYPE html>
@@ -40,14 +40,14 @@ export function getVerificationEmailTemplate(
     </p>
     
     <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-      Если вы не регистрировались на Трансформер, просто проигнорируйте это письмо.
+      Если вы не регистрировались на Трансформере, просто проигнорируйте это письмо.
     </p>
     
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
     
     <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
-      —<br>
-      Команда Трансформер
+      <br>
+      Команда Трансформерa
     </p>
   </div>
 </body>
@@ -60,7 +60,7 @@ export function getVerificationEmailTemplate(
 export function getPasswordResetEmailTemplate(
   resetUrl: string
 ): { subject: string; html: string } {
-  const subject = 'Сброс пароля — Трансформер'
+  const subject = 'Сброс пароля'
 
   const html = `
 <!DOCTYPE html>
@@ -75,7 +75,7 @@ export function getPasswordResetEmailTemplate(
     <h1 style="color: #111827; margin-top: 0;">Здравствуйте!</h1>
     
     <p style="color: #374151; font-size: 16px;">
-      Вы запросили сброс пароля для вашего аккаунта на Трансформер.
+      Вы запросили сброс пароля для вашего аккаунта на Трансформере.
     </p>
     
     <div style="text-align: center; margin: 30px 0;">
@@ -101,8 +101,8 @@ export function getPasswordResetEmailTemplate(
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
     
     <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
-      —<br>
-      Команда Трансформер
+      <br>
+      Команда Трансформера
     </p>
   </div>
 </body>
