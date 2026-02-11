@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useCommandMenu } from "@/lib/command-menu"
 import { useProgressStore } from "@/lib/progress"
 import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { isAdminEmail } from "@/lib/admin"
 import {
   DropdownMenu,
@@ -26,6 +26,8 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
   const { isDevMode, toggleDevMode } = useProgressStore()
   const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const isLearnPage = pathname?.startsWith('/learn') ?? false
 
   const handleCommandMenuOpen = () => {
     try {
@@ -73,7 +75,12 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
               height={24}
               className="object-contain"
             />
-            <h1 className="text-lg font-semibold cursor-pointer text-foreground">Трансформер</h1>
+            <h1 className="text-lg font-semibold cursor-pointer text-foreground relative inline-block">
+              Трансформер
+              {isLearnPage && (
+                <span className="absolute top-1 -right-6 text-[10px] font-normal text-white leading-none">Beta</span>
+              )}
+            </h1>
           </Link>
         </div>
         
@@ -89,8 +96,11 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
             height={24}
             className="object-contain mr-2"
           />
-          <h1 className="text-lg font-semibold text-foreground cursor-pointer">
+          <h1 className="text-lg font-semibold text-foreground cursor-pointer relative inline-block">
             Трансформер
+            {isLearnPage && (
+              <span className="absolute top-1 -right-6 text-[10px] font-normal text-white leading-none">Beta</span>
+            )}
           </h1>
         </Link>
         

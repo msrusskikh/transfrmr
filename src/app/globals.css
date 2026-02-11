@@ -348,7 +348,7 @@
   }
   
   /* Enhanced interactive elements for dark mode */
-  .dark a:not(.lesson-content a) {
+  .dark a:not(.lesson-content a):not(.footer-disclaimer-text) {
     @apply text-primary hover:text-primary/80 transition-colors duration-200;
   }
   
@@ -981,4 +981,11 @@
 .footer-disclaimer-text div {
   color: hsl(var(--muted-foreground) / 0.8) !important;
   opacity: 0.8 !important;
+}
+
+/* Footer links should become lighter/whiter on hover */
+a.footer-disclaimer-text:hover,
+a.footer-disclaimer-text:active {
+  color: hsl(var(--foreground)) !important;
+  opacity: 1 !important;
 }

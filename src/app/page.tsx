@@ -8,7 +8,7 @@ import { useProgressStore } from "@/lib/progress"
 import { modules } from "@/lib/content"
 import { useEffect, useState, Suspense, useRef } from "react"
 import { useAuth } from "@/contexts/AuthContext"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { 
   User, 
   LogOut, 
@@ -224,6 +224,8 @@ export default function HomePage() {
   const { completedSections, currentModule, currentSection, isDevMode } = useProgressStore()
   const { user, signOut, loading: authLoading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const isLandingPage = pathname === '/'
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isPaymentLoading, setIsPaymentLoading] = useState(false)
   
@@ -300,7 +302,7 @@ export default function HomePage() {
       {/* Header with Трансформер text */}
       <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="container flex h-14 items-center px-4 justify-between">
-          <div className="flex items-center space-x-2">
+          <Link href="/learn" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <Image 
               src="/logo.svg" 
               alt="Трансформер" 
@@ -308,17 +310,22 @@ export default function HomePage() {
               height={24}
               className="object-contain"
             />
-            <h1 className="text-lg font-semibold text-foreground">Трансформер</h1>
-          </div>
+            <h1 className="text-lg font-semibold text-foreground relative inline-block">
+              Трансформер
+              {isLandingPage && (
+                <span className="absolute top-1 -right-6 text-[10px] font-normal text-white leading-none">Beta</span>
+              )}
+            </h1>
+          </Link>
           {/* Authentication UI */}
           {!authLoading && (
             <>
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center space-x-2 px-3 py-2 min-h-[44px] rounded-md bg-muted/30 hover:bg-muted/50 active:bg-muted/60 transition-colors cursor-pointer touch-manipulation">
+                    <button className="flex items-center space-x-2 px-3 py-1.5 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="hidden min-[768px]:inline text-sm min-[1024px]:text-base text-foreground truncate max-w-[120px]">
+                      <span className="hidden md:inline text-xs text-foreground truncate max-w-[120px]">
                         {user.email}
                       </span>
                     </button>
@@ -331,12 +338,16 @@ export default function HomePage() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button asChild variant="outline" className="min-h-[44px] px-4 py-2 touch-manipulation">
-                  <Link href="/login">
+                <Link href="/login">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 px-3 hover:bg-accent/50 transition-all duration-200"
+                  >
                     <LogIn className="h-4 w-4 mr-2" />
-                    <span className="text-base">Войти</span>
-                  </Link>
-                </Button>
+                    <span className="text-xs">Войти</span>
+                  </Button>
+                </Link>
               )}
             </>
           )}
@@ -781,21 +792,21 @@ export default function HomePage() {
             </p>
             <a 
               href="mailto:hi@transfrmr.ai" 
-              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation block footer-disclaimer-text"
               style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               hi@transfrmr.ai
             </a>
             <Link 
               href="/oferta" 
-              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation block footer-disclaimer-text"
               style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               Оферта
             </Link>
             <Link 
               href="/privacy-policy" 
-              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation block footer-disclaimer-text"
+              className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation block footer-disclaimer-text"
               style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
               Политика конфиденциальности
@@ -813,7 +824,7 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground/60 leading-relaxed footer-disclaimer-text" style={{ opacity: '0.8' }}>ИНН 770475475401</p>
               <a 
                 href="mailto:hi@transfrmr.ai" 
-                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                className="text-sm text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
                 style={{ opacity: '0.8' }}
               >
                 hi@transfrmr.ai
@@ -824,14 +835,14 @@ export default function HomePage() {
             <div className="flex flex-col space-y-1.5 items-end text-right">
               <Link 
                 href="/oferta" 
-                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                className="text-sm text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
                 style={{ opacity: '0.8' }}
               >
                 Оферта
               </Link>
               <Link 
                 href="/privacy-policy" 
-                className="text-sm text-muted-foreground/60 hover:text-muted-foreground/90 active:text-muted-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
+                className="text-sm text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
                 style={{ opacity: '0.8' }}
               >
                 Политика конфиденциальности
