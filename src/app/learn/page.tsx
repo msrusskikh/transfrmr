@@ -75,7 +75,7 @@ export default function LearnPage() {
                 href={`/learn/1/1`}
                 className="md:hidden flex items-center gap-3 touch-manipulation"
               >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#0d9488' }}>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#845EEE' }}>
                   <Play className="h-5 w-5 text-white ml-0.5" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -89,7 +89,7 @@ export default function LearnPage() {
               >
                 <div 
                   className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                  style={{ backgroundColor: '#0d9488' }}
+                  style={{ backgroundColor: '#845EEE' }}
                 >
                   <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
                 </div>
@@ -115,7 +115,7 @@ export default function LearnPage() {
                 href={`/learn/${nextLesson.module.id}/${nextLesson.section.section}`}
                 className="md:hidden flex items-center gap-3 touch-manipulation"
               >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#0d9488' }}>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-colors" style={{ backgroundColor: '#845EEE' }}>
                   <Play className="h-5 w-5 text-white ml-0.5" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -129,7 +129,7 @@ export default function LearnPage() {
               >
                 <div 
                   className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                  style={{ backgroundColor: '#0d9488' }}
+                  style={{ backgroundColor: '#845EEE' }}
                 >
                   <Play className="h-4 w-4 text-white ml-0.5" fill="currentColor" />
                 </div>
