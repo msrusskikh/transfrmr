@@ -46,16 +46,22 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
     })
   }
 
+  const handleMobileLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    // Use router.push for more reliable navigation
+    router.push('/learn')
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container relative flex h-14 items-center justify-between px-4">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-1 md:flex-none">
           {/* Mobile menu button - only visible on mobile */}
           <Button
             variant="ghost"
             size="icon"
             onClick={onMobileMenuToggle}
-            className="h-9 w-9 hover:bg-accent/50 transition-all duration-200 md:hidden"
+            className="h-9 w-9 hover:bg-accent/50 transition-all duration-200 md:hidden flex-shrink-0"
             title={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
@@ -86,17 +92,27 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
         
         {/* Mobile: centered, clickable, 25% smaller */}
         <Link 
-          href="/learn" 
-          className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 flex md:hidden items-center scale-90 hover:opacity-80 transition-opacity"
+          href="/learn"
+          onClick={handleMobileLogoClick}
+          className="absolute left-1/2 top-1/2 flex md:hidden items-center touch-manipulation mobile-logo-link"
+          style={{ 
+            transform: 'translate(-50%, -50%) scale(0.9)',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            willChange: 'transform',
+            transformOrigin: 'center center',
+            transition: 'none'
+          }}
         >
           <Image 
             src="/logo.svg" 
             alt="Трансформер" 
             width={24} 
             height={24}
-            className="object-contain mr-2"
+            className="object-contain mr-2 flex-shrink-0"
+            priority
           />
-          <h1 className="text-lg font-semibold text-foreground cursor-pointer relative inline-block">
+          <h1 className="text-lg font-semibold text-foreground cursor-pointer relative inline-block whitespace-nowrap">
             Трансформер
             {isLearnPage && (
               <span className="absolute top-1 -right-6 text-[10px] font-normal text-white leading-none">Beta</span>
@@ -104,7 +120,7 @@ export function TopBar({ onMobileMenuToggle, isMobileMenuOpen }: TopBarProps) {
           </h1>
         </Link>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-shrink-0">
           <Button
             variant="ghost"
             size="icon"

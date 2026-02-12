@@ -850,6 +850,37 @@
     overflow-x: auto;
     word-wrap: break-word;
   }
+  
+  /* Prevent mobile logo link layout shifts during navigation */
+  header a[href="/learn"] {
+    contain: layout style paint;
+    isolation: isolate;
+  }
+  
+  /* Completely disable hover effects on mobile logo link to prevent shifts */
+  .mobile-logo-link,
+  .mobile-logo-link:hover,
+  .mobile-logo-link:active,
+  .mobile-logo-link:focus,
+  .mobile-logo-link:visited {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(0.9) !important;
+    transition: none !important;
+  }
+  
+  /* Disable hover on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .mobile-logo-link:hover {
+      opacity: 1 !important;
+      transform: translate(-50%, -50%) scale(0.9) !important;
+    }
+  }
+  
+  /* Ensure header container is stable during navigation */
+  header .container {
+    contain: layout;
+    position: relative;
+  }
 }
 
 /* Small mobile devices */
