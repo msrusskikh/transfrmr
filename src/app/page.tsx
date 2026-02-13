@@ -791,11 +791,11 @@ export default function HomePage() {
               <span className="footer-disclaimer-text" style={{ marginRight: '0.25rem', color: 'hsl(var(--muted-foreground) / 0.8)', opacity: '0.8' }}>ИНН</span>770475475401
             </p>
             <a 
-              href="mailto:hi@transfrmr.ai" 
+              href="mailto:hi@transfrmr.ru" 
               className="footer-mobile-item text-xs text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation block footer-disclaimer-text"
               style={{ marginBottom: '0.5rem', opacity: '0.8' }}
             >
-              hi@transfrmr.ai
+              hi@transfrmr.ru
             </a>
             <Link 
               href="/oferta" 
@@ -823,11 +823,11 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground/60 leading-relaxed footer-disclaimer-text" style={{ opacity: '0.8' }}>Русских М.С.</p>
               <p className="text-sm text-muted-foreground/60 leading-relaxed footer-disclaimer-text" style={{ opacity: '0.8' }}>ИНН 770475475401</p>
               <a 
-                href="mailto:hi@transfrmr.ai" 
+                href="mailto:hi@transfrmr.ru" 
                 className="text-sm text-muted-foreground/60 hover:text-foreground active:text-foreground transition-colors touch-manipulation leading-relaxed inline-block footer-disclaimer-text"
                 style={{ opacity: '0.8' }}
               >
-                hi@transfrmr.ai
+                hi@transfrmr.ru
               </a>
             </div>
 
