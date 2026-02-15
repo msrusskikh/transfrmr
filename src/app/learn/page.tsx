@@ -9,12 +9,52 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/lesson/ca
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { ArrowRight, Play, ChevronDown, ChevronUp, Circle } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import WelcomePopup from "@/components/lesson/WelcomePopup"
+
+const WELCOME_POPUP_KEY = "welcome-popup-dismissed"
 
 export default function LearnPage() {
   const { currentModule, currentSection, completedSections, isDevMode } = useProgressStore()
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set())
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false)
+
+  // Check if welcome popup should be shown on mount
+  // Show popup only if:
+  // 1. User hasn't dismissed it before (localStorage check)
+  // 2. AND user hasn't completed any lessons (completedSections.size === 0)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hasSeenWelcome = localStorage.getItem(WELCOME_POPUP_KEY)
+      const hasCompletedLessons = completedSections.size > 0
+      
+      // Only show if user hasn't seen it AND hasn't completed any lessons
+      if (!hasSeenWelcome && !hasCompletedLessons) {
+        setShowWelcomePopup(true)
+      } else {
+        setShowWelcomePopup(false)
+      }
+    }
+  }, [completedSections.size])
+
+  const handleWelcomePopupClose = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(WELCOME_POPUP_KEY, "true")
+    }
+    setShowWelcomePopup(false)
+  }
+
+  // Also hide popup if user completes a lesson while it's open
+  useEffect(() => {
+    if (completedSections.size > 0 && showWelcomePopup) {
+      setShowWelcomePopup(false)
+      // Mark as dismissed so it doesn't show again
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(WELCOME_POPUP_KEY, "true")
+      }
+    }
+  }, [completedSections.size, showWelcomePopup])
   
   const currentModuleData = modules.find(m => m.id === currentModule)
   const currentSectionData = currentModuleData?.sections.find(s => s.section === currentSection)
@@ -65,6 +105,7 @@ export default function LearnPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <WelcomePopup isOpen={showWelcomePopup} onClose={handleWelcomePopupClose} />
       <div className="container mx-auto px-4 min-[375px]:px-6 py-6 md:py-8">
         <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
         {/* Banner for new learners */}

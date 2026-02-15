@@ -460,7 +460,7 @@ const CourseCompletionPopup: React.FC<CourseCompletionPopupProps> = ({
                   className="btn-primary btn-mobile"
                   onClick={handleReviewClick}
                 >
-                  Поделиться мнением
+                  Похвалить / Поругать
                 </button>
                 <button 
                   style={{...styles.btn, ...styles.btnSecondary}} 
