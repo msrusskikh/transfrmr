@@ -11,7 +11,7 @@ interface WelcomePopupProps {
 
 const welcomeScreens = [
   {
-    title: 'Добро пожаловать!',
+    title: 'Добро пожаловать 💫 ',
     content: 'Искусственный интеллект — это не магия, а инструмент вроде Excel или поиска. Стоит начать пользоваться, и всё станет очевидным.\n\nМы не даем списки инструкций. Мы учим думать об ИИ: как он устроен, в чем его сила, а где он беспомощен. Наша цель — ваш фундамент, а не просто лайфхаки.',
     image: '/welcome-hands.png', // Image for first screen
   },
@@ -19,7 +19,7 @@ const welcomeScreens = [
     title: 'Как учиться?',
     content: (
       <>
-        <strong>Ваш ориентир:</strong> Фиолетовая кнопка «Play» вверху. Просто нажимайте её, чтобы перейти к следующему уроку.{'\n\n'}
+        <strong>Ваш ориентир:</strong> Фиолетовая кнопка «Play» вверху – она ведёт к следующему уроку. Просто нажимайте её, когда открываете курс.{'\n\n'}
         <strong>В закладки:</strong> Добавьте сайт в браузер — в поиске нас пока найти непросто.
       </>
     ),
@@ -49,55 +49,54 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set());
-  const [imageOpacity, setImageOpacity] = useState(1);
+  const [imagesReady, setImagesReady] = useState(false);
 
-  // Preload all images when popup opens
+  // Preload all images before showing popup
   useEffect(() => {
     if (isOpen) {
-      setIsVisible(true);
       setCurrentScreen(0);
+      setImagesReady(false);
       
-      // Preload all images
+      // Preload all images and wait for them to load
       const imagePaths = welcomeScreens
         .map(screen => screen.image)
         .filter(Boolean) as string[];
       
+      if (imagePaths.length === 0) {
+        // No images to load, show immediately
+        setImagesReady(true);
+        setIsVisible(true);
+        return;
+      }
+      
+      let loadedCount = 0;
+      const totalImages = imagePaths.length;
+      
       imagePaths.forEach((imagePath) => {
         const img = new Image();
         img.onload = () => {
-          setImagesLoaded(prev => new Set(prev).add(imagePath));
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            // All images loaded, now show the popup
+            setImagesReady(true);
+            setIsVisible(true);
+          }
+        };
+        img.onerror = () => {
+          // Even if image fails to load, count it as "loaded" to not block the popup
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            setImagesReady(true);
+            setIsVisible(true);
+          }
         };
         img.src = imagePath;
       });
+    } else {
+      setIsVisible(false);
+      setImagesReady(false);
     }
   }, [isOpen]);
-
-  // Handle image transition when screen changes
-  useEffect(() => {
-    const currentImage = welcomeScreens[currentScreen]?.image;
-    if (currentImage) {
-      if (imagesLoaded.has(currentImage)) {
-        // Image is already preloaded, show immediately with no fade
-        setImageOpacity(1);
-      } else {
-        // Image not yet loaded, fade out briefly then fade in when ready
-        setImageOpacity(0);
-        const img = new Image();
-        img.onload = () => {
-          setImagesLoaded(prev => new Set(prev).add(currentImage));
-          // Small delay to ensure smooth transition
-          requestAnimationFrame(() => {
-            setImageOpacity(1);
-          });
-        };
-        img.src = currentImage;
-      }
-    } else {
-      // No image for this screen
-      setImageOpacity(1);
-    }
-  }, [currentScreen, imagesLoaded]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -156,13 +155,14 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
       width: '100%',
-      minHeight: 'auto'
+      height: '180px', // Fixed height to prevent popup resizing
+      minHeight: '180px',
     },
     imageWrapper: {
       position: 'relative' as const,
       width: '100%',
       maxWidth: '400px',
-      height: 'auto',
+      height: '100%',
       display: 'flex' as const,
       alignItems: 'center' as const,
       justifyContent: 'center' as const,
@@ -172,7 +172,6 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
       height: 'auto',
       maxWidth: '400px',
       objectFit: 'contain' as const,
-      transition: 'opacity 0.2s ease-in-out',
     },
     placeholderIcon: {
       width: '64px',
@@ -342,6 +341,10 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
         background: rgba(0, 0, 0, 0.15) !important;
         transform: scale(0.95) !important;
       }
+      .image-container-mobile {
+        height: 150px !important;
+        min-height: 150px !important;
+      }
       .image-wrapper-mobile {
         max-width: 320px !important;
       }
@@ -390,15 +393,13 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
           </button>
           
           {currentScreenData.image ? (
-            <div style={styles.imageContainer}>
+            <div style={styles.imageContainer} className="image-container-mobile">
               <div style={styles.imageWrapper} className="image-wrapper-mobile">
                 <img
+                  key={`welcome-image-${currentScreen}`}
                   src={currentScreenData.image}
                   alt=""
-                  style={{
-                    ...styles.image,
-                    opacity: imageOpacity
-                  }}
+                  style={styles.image}
                 />
               </div>
             </div>
