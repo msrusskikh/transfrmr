@@ -11,8 +11,8 @@ interface WelcomePopupProps {
 
 const welcomeScreens = [
   {
-    title: 'Добро пожаловать в Трансформер',
-    content: 'Искусственный интеллект — это не магия, а инструмент вроде Excel или поиска. Стоит начать, и всё станет очевидным.\n\nМы не даем списки инструкций. Мы учим думать об ИИ: как он устроен, в чем его сила, а где он беспомощен. Наша цель — ваш фундамент, а не просто лайфхаки.',
+    title: 'Добро пожаловать!',
+    content: 'Искусственный интеллект — это не магия, а инструмент вроде Excel или поиска. Стоит начать пользоваться, и всё станет очевидным.\n\nМы не даем списки инструкций. Мы учим думать об ИИ: как он устроен, в чем его сила, а где он беспомощен. Наша цель — ваш фундамент, а не просто лайфхаки.',
     image: '/welcome-hands.png', // Image for first screen
   },
   {
@@ -49,13 +49,55 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set());
+  const [imageOpacity, setImageOpacity] = useState(1);
 
+  // Preload all images when popup opens
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
       setCurrentScreen(0);
+      
+      // Preload all images
+      const imagePaths = welcomeScreens
+        .map(screen => screen.image)
+        .filter(Boolean) as string[];
+      
+      imagePaths.forEach((imagePath) => {
+        const img = new Image();
+        img.onload = () => {
+          setImagesLoaded(prev => new Set(prev).add(imagePath));
+        };
+        img.src = imagePath;
+      });
     }
   }, [isOpen]);
+
+  // Handle image transition when screen changes
+  useEffect(() => {
+    const currentImage = welcomeScreens[currentScreen]?.image;
+    if (currentImage) {
+      if (imagesLoaded.has(currentImage)) {
+        // Image is already preloaded, show immediately with no fade
+        setImageOpacity(1);
+      } else {
+        // Image not yet loaded, fade out briefly then fade in when ready
+        setImageOpacity(0);
+        const img = new Image();
+        img.onload = () => {
+          setImagesLoaded(prev => new Set(prev).add(currentImage));
+          // Small delay to ensure smooth transition
+          requestAnimationFrame(() => {
+            setImageOpacity(1);
+          });
+        };
+        img.src = currentImage;
+      }
+    } else {
+      // No image for this screen
+      setImageOpacity(1);
+    }
+  }, [currentScreen, imagesLoaded]);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -130,6 +172,7 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
       height: 'auto',
       maxWidth: '400px',
       objectFit: 'contain' as const,
+      transition: 'opacity 0.2s ease-in-out',
     },
     placeholderIcon: {
       width: '64px',
@@ -352,7 +395,10 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({
                 <img
                   src={currentScreenData.image}
                   alt=""
-                  style={styles.image}
+                  style={{
+                    ...styles.image,
+                    opacity: imageOpacity
+                  }}
                 />
               </div>
             </div>
