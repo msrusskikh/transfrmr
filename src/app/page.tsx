@@ -54,9 +54,9 @@ function CourseModuleCard({ module }: { module: { title: string; description: st
             <div className="flex-1">
               <CardTitle className="text-lg mb-2">{module.title}</CardTitle>
               {isOpen && (
-                <p className="text-muted-foreground leading-relaxed text-base mt-2">
+                <div className="text-muted-foreground leading-relaxed text-base mt-2 whitespace-pre-line">
                   {module.description}
-                </p>
+                </div>
               )}
             </div>
           </div>
@@ -359,11 +359,17 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="container mx-auto px-4 min-[375px]:px-6 py-12 min-[768px]:py-20 min-[1024px]:py-32">
           <div className="max-w-4xl mx-auto text-center space-y-6 min-[768px]:space-y-8">
+            <span
+              className="inline-block px-4 py-2 rounded-lg text-base font-medium border border-teal-400/70 bg-transparent"
+              style={{ color: 'rgb(45 212 191 / 0.7)' }}
+            >
+              ИИ для работы
+            </span>
             <h1 className="text-3xl min-[375px]:text-4xl min-[768px]:text-5xl min-[1024px]:text-6xl font-bold tracking-tight text-foreground leading-tight">
               Начните пользоваться ИИ легко и уверенно
             </h1>
             <p className="text-base min-[375px]:text-lg min-[768px]:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              Трансформер — это игровой курс по основам ИИ. Всё необходимое, чтобы с нуля начать применять ИИ в работе — просто, практично и без перегруза.
+            Короткий текстовый курс по основам ИИ. Всё необходимое, чтобы с нуля начать применять ИИ в работе — просто, практично и без перегруза
             </p>
             
             {/* Hero Image */}
@@ -443,7 +449,7 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    Не нужно ничего знать про ИИ или «промпты» — начнём с самых простых шагов.
+                    Не нужно ничего знать про ИИ или промпты — начнём с самых простых шагов
                   </p>
                 </CardContent>
               </Card>
@@ -454,11 +460,11 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Clock className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Учитесь в своём ритме</CardTitle>
+                  <CardTitle className="text-xl">В своём ритме</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    Уроки по 5–15 минут. Можно пройти за обед или между делами.
+                    Мини-уроки по 3–5 минут. Можно идти постепенно или пройти интенсивом за выходные
                   </p>
                 </CardContent>
               </Card>
@@ -469,31 +475,16 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Target className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Максимум практики</CardTitle>
+                  <CardTitle className="text-xl">Практика в лабораторных</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    Интерактивные задания, мини-лабы и шпаргалки закрепят знания и дадут уверенность.
+                    В конце каждого модуля — лабораторная работа и короткий тест, чтобы закрепить навыки
                   </p>
                 </CardContent>
               </Card>
 
               {/* Feature 4 */}
-              <Card className="border-border/30 bg-card/30 hover:bg-card/50 active:bg-card/60 transition-colors touch-manipulation">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <Gamepad2 className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">Учёба как игра</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Прогресс, уровни, челленджи. Лёгкость и азарт вместо скуки.
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Feature 5 */}
               <Card className="border-border/30 bg-card/30 hover:bg-card/50 active:bg-card/60 transition-colors touch-manipulation">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
@@ -503,12 +494,12 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    Только то, что реально нужно для работы: инструменты, сценарии, практика, этика.
+                  Только то, что действительно нужно в работе: инструменты, сценарии, практика и этика
                   </p>
                 </CardContent>
               </Card>
 
-              {/* Feature 6 */}
+              {/* Feature 5 */}
               <Card className="border-border/30 bg-card/30 hover:bg-card/50 active:bg-card/60 transition-colors touch-manipulation">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
@@ -518,7 +509,22 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    Курс адаптирован под телефон. Учитесь где угодно — в метро, в очереди, дома на диване.
+                  Платформа адаптирована под телефон. Учитесь где удобно — в дороге, в очереди или дома
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Feature 6 */}
+              <Card className="border-border/30 bg-card/30 hover:bg-card/50 active:bg-card/60 transition-colors touch-manipulation">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <Gamepad2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Доступ навсегда</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Пожизненный доступ и регулярные обновления. Можно возвращаться в любой момент, чтобы освежить знания
                   </p>
                 </CardContent>
               </Card>
@@ -530,43 +536,43 @@ export default function HomePage() {
         <section className="container mx-auto px-4 min-[375px]:px-6 py-12 min-[768px]:py-20">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-              Про что расскажем на курсе
+              Про что расскажем
             </h2>
             <div className="space-y-4">
               {[
                 {
-                  title: "Как работает современный ИИ",
-                  description: "Простое объяснение без формул и заумных терминов. Поймёте, что ИИ может и чего от него ждать не стоит.",
+                  title: "Мышление и основы ИИ",
+                  description: "Поймёте, как устроены современные ИИ-ассистенты:\n• что они умеют и чего не умеют\n• их сильные и слабые стороны\n• цикл работы: «черновик → проверка → правки»\n",
                   icon: Brain
                 },
                 {
-                  title: "Как правильно задавать вопросы",
-                  description: "Мини-гайд по «промптам» — на понятных примерах.",
+                  title: "Искусство промптинга",
+                  description: "Освоите структуру сильных запросов:\n«Роль → Цель → Шаги → Ограничения → Критерий качества»\n• 5 базовых шаблонов\n• многошаговые цепочки запросов",
                   icon: MessageSquare
                 },
                 {
-                  title: "Инструменты для работы",
-                  description: "Разберём ChatGPT, Claude, Midjourney и другие помощники.",
-                  icon: Wrench
-                },
-                {
-                  title: "Реальные рабочие сценарии",
-                  description: "Маркетинг, тексты, аналитика, исследования, презентации. Всё на практических кейсах.",
-                  icon: Lightbulb
-                },
-                {
-                  title: "Как решать ошибки и «тупики»",
-                  description: "Что делать, если ИИ отвечает не то, и как быстро вернуться к делу.",
+                  title: "Ошибки и быстрые исправления",
+                  description: "Научитесь диагностировать сбои:\n• как уточнять контекст\n• как дробить задачи\n• как возвращать модель в нужное русло",
                   icon: AlertCircle
                 },
                 {
+                  title: "Инструменты и рабочие процессы",
+                  description: "Поймёте, почему важнее выстроить процесс, чем выучить один инструмент — и как соединять ИИ в рабочие цепочки.",
+                  icon: Wrench
+                },
+                {
+                  title: "Поиск и масштабирование кейсов",
+                  description: "• находить задачи по правилу 80/20\n• использовать чек-лист автоматизации\n• измерять эффект: время, ошибки, ценность\n• масштабировать за пределы своей роли",
+                  icon: Lightbulb
+                },
+                {
                   title: "Этика и границы",
-                  description: "Как использовать ИИ безопасно и ответственно.",
+                  description: "• гигиена данных\n• конфиденциальность\n• когда ИИ применять не стоит\n• как встраивать человеческую проверку",
                   icon: Shield
                 },
                 {
-                  title: "Как оставаться в курсе",
-                  description: "Простой фреймворк: как отслеживать новинки и не утонуть в потоке информации.",
+                  title: "ИИ-культура и зрелое внедрение",
+                  description: "• формировать привычку работы с ИИ\n• фиксировать кейсы\n• делиться промптами\n• вести ИИ-плейбук\n• превращать находки в стандарты команды",
                   icon: TrendingUp
                 }
               ].map((module, index) => (
@@ -584,16 +590,18 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                "Вы полный новичок и пользовались ChatGPT максимум пару раз",
-                "Любите, когда учёба похожа на игру, а не на лекцию",
-                "Хотите ускорить рабочие задачи и повысить продуктивность",
-                "Времени мало, а разобраться хочется качественно",
-                "Предпочитаете рабочие сценарии вместо скучной теории",
-                "Хотите попробовать ИИ, но боитесь запутаться"
+                { title: "Хотите начать с нуля", description: "Без опыта, терминов и кода — объясняем ИИ на языке смыслов" },
+                { title: "ИИ кажется «чёрным ящиком»", description: "Разберётесь, как модель принимает решения и почему ошибается" },
+                { title: "Нужен фундамент, а не шпаргалки", description: "Фокус на понимании логики, а не копировании чужих запросов" },
+                { title: "Пробовали — но разочаровались", description: "Научитесь брать ответы под контроль и получать сильный результат" },
+                { title: "Мало времени", description: "Интенсивный формат без воды — можно пройти за выходные" }
               ].map((item, index) => (
                 <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-card/20 border border-border/20 hover:bg-card/30 active:bg-card/40 transition-colors touch-manipulation">
                   <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-foreground leading-relaxed">{item}</p>
+                  <div>
+                    <p className="font-medium text-foreground leading-relaxed">{item.title}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-1">{item.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -605,7 +613,7 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto text-center space-y-8 min-[768px]:space-y-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-                Готовы стать уверенным пользователем ИИ?
+                Станьте уверенным пользователем ИИ
               </h2>
             </div>
             
@@ -614,11 +622,17 @@ export default function HomePage() {
                 <div className="text-center space-y-8">
                   {/* Header */}
                   <div className="space-y-2">
+                    <span
+                      className="inline-block px-4 py-2 rounded-lg text-base font-medium border border-teal-400/70 bg-transparent"
+                      style={{ color: 'rgb(45 212 191 / 0.7)' }}
+                    >
+                      ИИ для работы
+                    </span>
                     <h3 className="text-3xl font-bold tracking-tight text-foreground">
-                      Стоимость курса
+                    Доступ ко всему курсу
                     </h3>
                     <p className="text-muted-foreground text-base">
-                      Полный доступ ко всем материалам
+                    Навсегда, с обновлениями
                     </p>
                   </div>
 
@@ -631,7 +645,7 @@ export default function HomePage() {
                     
                     {/* Discount Badge */}
                     <div className="inline-flex items-center px-3 py-1.5 rounded-md bg-muted/30 border border-border/40">
-                      <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Экономия 70%</span>
+                      <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Скидка 70%</span>
                     </div>
                   </div>
 
@@ -642,15 +656,19 @@ export default function HomePage() {
                   <div className="space-y-3 text-left">
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                      <p className="text-base text-foreground">50+ интерактивных уроков</p>
+                      <p className="text-base text-foreground">38 коротких уроков</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                      <p className="text-base text-foreground">Практические задания и кейсы</p>
+                      <p className="text-base text-foreground">3 практические лабораторные</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                      <p className="text-base text-foreground">Пожизненный доступ к материалам</p>
+                      <p className="text-base text-foreground">4 теста для закрепления</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                      <p className="text-base text-foreground">Пожизненный доступ и обновления</p>
                     </div>
                   </div>
 
@@ -770,7 +788,7 @@ export default function HomePage() {
                       }}
                       disabled={!agreedToTerms || isPaymentLoading}
                     >
-                      {isPaymentLoading ? 'Подготовка оплаты...' : 'Купить курс'}
+                      {isPaymentLoading ? 'Подготовка оплаты...' : 'Начать обучение'}
                     </Button>
                     <div className="mt-3"></div>
                   </div>

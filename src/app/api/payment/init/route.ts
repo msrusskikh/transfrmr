@@ -3,7 +3,7 @@ import { generateOrderId, generatePaymentSignature } from '@/lib/payment/signatu
 
 // Production price: 3,290 ₽ (329000 kopecks)
 const PAYMENT_AMOUNT = 329000 // 3,290 ₽ in kopecks
-const PRODUCT_NAME = 'Доступ к курсу "Трансформер"'
+const PRODUCT_NAME = 'Доступ к курсу "ИИ для работы"'
 const PRODUCT_QUANTITY = 1
 
 export async function POST(request: NextRequest) {
