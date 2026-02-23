@@ -731,7 +731,9 @@ export default function HomePage() {
                       className="w-full min-h-[44px] bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white shadow-sm px-6 min-[768px]:px-8 text-base font-medium touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-teal-600"
                       onClick={async () => {
                         if (!agreedToTerms) return
-                        
+                        if (typeof window !== 'undefined' && typeof (window as unknown as { ym?: (id: number, goal: string, name: string) => void }).ym === 'function') {
+                          (window as unknown as { ym: (id: number, goal: string, name: string) => void }).ym(106758513, 'reachGoal', 'start_course_click')
+                        }
                         setIsPaymentLoading(true)
                         try {
                           // Call payment init API
