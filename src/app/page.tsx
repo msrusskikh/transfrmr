@@ -235,6 +235,28 @@ export default function HomePage() {
     localStorage.setItem('theme', 'dark')
   }, [])
   
+  // Fire Metrica goal when at least 50% of pricing section is visible
+  useEffect(() => {
+    const el = document.getElementById('pricing-section')
+    if (!el || typeof window === 'undefined') return
+    const ym = (window as unknown as { ym?: (id: number, goal: string, name: string) => void }).ym
+    if (typeof ym !== 'function') return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            ym(106758513, 'reachGoal', 'pricing_view')
+            observer.disconnect()
+            return
+          }
+        }
+      },
+      { threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  
   const handleSignOut = async () => {
     // Navigate immediately for instant feedback
     router.push('/')
@@ -422,6 +444,9 @@ export default function HomePage() {
                   size="lg" 
                   className="min-h-[44px] shadow-sm px-6 min-[768px]:px-8 touch-manipulation"
                   onClick={() => {
+                    if (typeof window !== 'undefined' && typeof (window as unknown as { ym?: (id: number, goal: string, name: string) => void }).ym === 'function') {
+                      (window as unknown as { ym: (id: number, goal: string, name: string) => void }).ym(106758513, 'reachGoal', 'start_course_hero_click')
+                    }
                     const pricingSection = document.getElementById('pricing-section')
                     if (pricingSection) {
                       pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
