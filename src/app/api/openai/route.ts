@@ -46,9 +46,16 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const text = await response.text()
-        console.error('OpenAI API error:', response.status, text)
+        let message = text
+        try {
+          const parsed = JSON.parse(text)
+          message = parsed?.error?.message || text
+        } catch {
+          // ignore JSON parse errors, keep raw text
+        }
+        console.error('OpenAI API error:', response.status, message)
         return NextResponse.json(
-          { error: "OpenAI API error", details: text },
+          { error: message },
           { status: response.status }
         )
       }
@@ -80,9 +87,16 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const text = await response.text()
-        console.error('OpenAI API error:', response.status, text)
+        let message = text
+        try {
+          const parsed = JSON.parse(text)
+          message = parsed?.error?.message || text
+        } catch {
+          // ignore JSON parse errors, keep raw text
+        }
+        console.error('OpenAI API error:', response.status, message)
         return NextResponse.json(
-          { error: "OpenAI API error", details: text },
+          { error: message },
           { status: response.status }
         )
       }
@@ -134,8 +148,16 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const text = await response.text()
+      let message = text
+      try {
+        const parsed = JSON.parse(text)
+        message = parsed?.error?.message || text
+      } catch {
+        // ignore JSON parse errors, keep raw text
+      }
+      console.error('OpenAI API error:', response.status, message)
       return NextResponse.json(
-        { error: "OpenAI API error", details: text },
+        { error: message },
         { status: response.status }
       )
     }

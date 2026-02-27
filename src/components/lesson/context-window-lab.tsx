@@ -278,7 +278,8 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        throw new Error(err?.details || 'API error')
+        const message = err?.error || err?.details || `HTTP ${res.status}`
+        throw new Error(message)
       }
       const data = await res.json()
       const responseContent = data?.content || ''
@@ -295,9 +296,12 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
       }
     } catch (e) {
       console.error('API call error:', e)
-      const errorMessage = e instanceof Error && e.message.includes('Invalid response format') 
+      const rawMessage = e instanceof Error ? e.message : String(e)
+      const errorMessage = rawMessage.includes('Invalid response format')
         ? 'Получен неверный формат ответа от API. Попробуйте ещё раз.'
-        : 'Ошибка вызова API. Проверьте ключ и попробуйте ещё раз.'
+        : rawMessage.includes('OPENAI') || rawMessage.includes('API')
+          ? `Ошибка API: ${rawMessage}`
+          : `Ошибка вызова API: ${rawMessage}`
       setApiResponse(errorMessage)
     } finally {
       setIsLoading(false)

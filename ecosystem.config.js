@@ -37,7 +37,7 @@ module.exports = {
       // Application URL - REQUIRED
       NEXT_PUBLIC_APP_URL: 'https://transfrmr.ru',
       
-      // OpenAI API (optional - only if using AI features)
+      // OpenAI API (required for labs) - must be set here or via: node setup-pm2-env.js && pm2 restart
       OPENAI_API_KEY: '',
       
       // Payment API (optional - only if using payment features)

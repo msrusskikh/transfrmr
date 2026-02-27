@@ -153,9 +153,28 @@ Create a `.env.local` file in the root directory with the following variables:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# OpenAI API (if using AI features)
+# OpenAI API (required for interactive labs)
 OPENAI_API_KEY=your_openai_api_key
 ```
+
+### Deployment on VPS (PM2)
+
+If you run the app with PM2 (e.g. `pm2 start ecosystem.config.js`), **environment variables are taken from `ecosystem.config.js`, not from `.env`**. So even if `.env` on the VPS has `OPENAI_API_KEY`, the Next.js process will not see it unless it is passed via PM2.
+
+**Fix for "Server missing OPENAI_API_KEY" in labs:**
+
+1. On the VPS, from the project root run:
+   ```bash
+   node setup-pm2-env.js
+   ```
+   This reads your `.env` (or `.env.local`) and writes the values into `ecosystem.config.js`.
+
+2. Restart the app:
+   ```bash
+   pm2 restart ecosystem.config.js
+   ```
+
+Alternatively, edit `ecosystem.config.js` and set `OPENAI_API_KEY` (and other secrets) manually in the `env` object, then run `pm2 restart ecosystem.config.js`.
 
 ### Supabase Setup
 
