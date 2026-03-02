@@ -65,7 +65,7 @@ ${CUSTOMER_FEEDBACK.join('\n')}
           // Note: AI instructed to be concise and structured without strict token limits
           systemPrompt: systemPrompt,
           userPrompt: fullUserPrompt,
-          model: "gpt-4o-mini",
+          model: "deepseek-chat",
           temperature: 0.7
         }),
       })
@@ -579,7 +579,7 @@ export const IterationChallengeLab: React.FC<IterationChallengeLabProps> = ({ on
       <div className="text-center text-sm text-muted-foreground mt-8">
         <div className="flex items-center justify-center space-x-2">
           <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
-          <span>Powered by OpenAI</span>
+          <span>Powered by DeepSeek</span>
         </div>
       </div>
     </div>

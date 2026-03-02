@@ -1,4 +1,4 @@
-// System prompts for OpenAI API calls
+// System prompts for AI API calls
 
 export const SYSTEM_PROMPTS = {
   base: `Ты помогаешь анализировать клиентский фидбек для SaaS компании. Отвечай на русском языке. Предоставляй структурированный, профессиональный анализ, подходящий для бизнес-руководства.`,

@@ -63,7 +63,7 @@ const ecosystemConfig = `module.exports = {
       SMTP_PASSWORD: '${config.SMTP_PASSWORD || ''}',
       SMTP_FROM: '${config.SMTP_FROM}',
       NEXT_PUBLIC_APP_URL: '${config.NEXT_PUBLIC_APP_URL}',
-      OPENAI_API_KEY: '${config.OPENAI_API_KEY || ''}',
+      DEEPSEEK_API_KEY: '${config.DEEPSEEK_API_KEY || ''}',
       PAYMENT_MERCHANT_ID: '${config.PAYMENT_MERCHANT_ID || ''}',
       PAYMENT_API_KEY: '${config.PAYMENT_API_KEY || ''}',
     },

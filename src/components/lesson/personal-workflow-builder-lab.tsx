@@ -188,7 +188,7 @@ export default function PersonalWorkflowBuilderLab() {
         body: JSON.stringify({ 
           contextPrompt: "Тест API", 
           testQuestion: "Ответь 'API работает'", 
-          model: 'gpt-4o-mini' 
+          model: 'deepseek-chat' 
         })
       })
       
@@ -274,7 +274,7 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         body: JSON.stringify({ 
           contextPrompt: analysisPrompt, 
           testQuestion: "Проанализируйте эти задачи на потенциал автоматизации с ИИ", 
-          model: 'gpt-4o-mini' 
+          model: 'deepseek-chat' 
         })
       })
       
@@ -395,7 +395,7 @@ ${state.userTasks.map((task, i) => `${i + 1}. ${task.description} (${task.freque
         body: JSON.stringify({ 
           contextPrompt: workflowPrompt, 
           testQuestion: "Создайте детальный 3-этапный workflow для автоматизации этой задачи", 
-          model: 'gpt-4o-mini' 
+          model: 'deepseek-chat' 
         })
       })
       
@@ -494,7 +494,7 @@ ${state.generatedWorkflow}
         body: JSON.stringify({ 
           systemPrompt: systemPrompt,
           userPrompt: userPrompt,
-          model: 'gpt-4o-mini',
+          model: 'deepseek-chat',
           temperature: 0.7
         })
       })
@@ -560,7 +560,7 @@ ${state.generatedWorkflow}
         body: JSON.stringify({ 
           contextPrompt: planPrompt, 
           testQuestion: "Создайте 7-дневный план внедрения для этой задачи", 
-          model: 'gpt-4o-mini' 
+          model: 'deepseek-chat' 
         })
       })
       

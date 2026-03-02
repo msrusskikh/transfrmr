@@ -273,7 +273,7 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
         body: JSON.stringify({ 
           contextPrompt: contextRefreshPrompt, 
           testQuestion: selectedQuestion, 
-          model: 'gpt-4o-mini' 
+          model: 'deepseek-chat' 
         })
       })
       if (!res.ok) {
@@ -1203,7 +1203,7 @@ export default function ContextWindowLab({ onComplete }: ContextWindowLabProps) 
         <div className="text-center text-sm text-muted-foreground">
           <div className="flex items-center justify-center space-x-2">
             <div className="w-1.5 h-1.5 bg-green-500/70 rounded-full"></div>
-            <span>Powered by OpenAI</span>
+            <span>Powered by DeepSeek</span>
           </div>
         </div>
       </div>

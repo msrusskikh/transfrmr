@@ -2,22 +2,28 @@ import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
-    console.log('=== OpenAI API route called ===')
+    console.log('=== DeepSeek API route called ===')
     console.log('Environment variables check:')
-    console.log('- OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY)
-    console.log('- OPENAI_API_KEY length:', process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0)
-    console.log('- OPENAI_API_KEY preview:', process.env.OPENAI_API_KEY ? `${process.env.OPENAI_API_KEY.substring(0, 10)}...` : 'undefined')
+    console.log('- DEEPSEEK_API_KEY exists:', !!process.env.DEEPSEEK_API_KEY)
+    console.log(
+      '- DEEPSEEK_API_KEY length:',
+      process.env.DEEPSEEK_API_KEY ? process.env.DEEPSEEK_API_KEY.length : 0
+    )
+    console.log(
+      '- DEEPSEEK_API_KEY preview:',
+      process.env.DEEPSEEK_API_KEY ? `${process.env.DEEPSEEK_API_KEY.substring(0, 10)}...` : 'undefined'
+    )
     
     const body = await request.json()
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.DEEPSEEK_API_KEY
 
     if (!apiKey) {
-      console.error('❌ Missing OPENAI_API_KEY - Environment variable not loaded!')
-      console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('OPENAI')))
-      return NextResponse.json({ error: "Server missing OPENAI_API_KEY" }, { status: 500 })
+      console.error('❌ Missing DEEPSEEK_API_KEY - Environment variable not loaded!')
+      console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('DEEPSEEK')))
+      return NextResponse.json({ error: "Server missing DEEPSEEK_API_KEY" }, { status: 500 })
     }
 
-    console.log('✅ API key loaded successfully')
+    console.log('✅ DeepSeek API key loaded successfully')
 
     // Handle lab prompts (new format)
     if (body.systemPrompt && body.userPrompt) {
@@ -29,16 +35,16 @@ export async function POST(request: Request) {
         { role: "user", content: body.userPrompt },
       ];
       
-      console.log('Full messages being sent to OpenAI:', JSON.stringify(messages, null, 2))
+      console.log('Full messages being sent to DeepSeek:', JSON.stringify(messages, null, 2))
       
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: body.model || "gpt-4o-mini",
+          model: body.model || "deepseek-chat",
           temperature: body.temperature || 0.7,
           messages: messages,
         }),
@@ -46,16 +52,16 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const text = await response.text()
-        console.error('OpenAI API error:', response.status, text)
+        console.error('DeepSeek API error:', response.status, text)
         return NextResponse.json(
-          { error: "OpenAI API error", details: text },
+          { error: "DeepSeek API error", details: text },
           { status: response.status }
         )
       }
 
       const data = await response.json()
       const response_text = data?.choices?.[0]?.message?.content || ""
-      console.log('OpenAI response received, length:', response_text.length)
+      console.log('DeepSeek response received, length:', response_text.length)
       return NextResponse.json({ response: response_text })
     }
 
@@ -63,14 +69,14 @@ export async function POST(request: Request) {
     if (body.prompt) {
       console.log('Processing lab prompt (old format):', body.prompt.substring(0, 100) + '...')
       
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: body.model || "gpt-4o-mini",
+          model: body.model || "deepseek-chat",
           temperature: body.temperature || 0.7,
           messages: [
             { role: "user", content: body.prompt },
@@ -80,16 +86,16 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const text = await response.text()
-        console.error('OpenAI API error:', response.status, text)
+        console.error('DeepSeek API error:', response.status, text)
         return NextResponse.json(
-          { error: "OpenAI API error", details: text },
+          { error: "DeepSeek API error", details: text },
           { status: response.status }
         )
       }
 
       const data = await response.json()
       const response_text = data?.choices?.[0]?.message?.content || ""
-      console.log('OpenAI response received, length:', response_text.length)
+      console.log('DeepSeek response received, length:', response_text.length)
       return NextResponse.json({ response: response_text })
     }
 
@@ -100,7 +106,7 @@ export async function POST(request: Request) {
     console.log('Processing context window lab prompt:')
     console.log('- Context prompt length:', contextPrompt?.length || 0)
     console.log('- Test question length:', testQuestion?.length || 0)
-    console.log('- Model:', model || 'gpt-4o-mini')
+    console.log('- Model:', model || 'deepseek-chat')
     
     const composedUserMessage = [
       "You are helping plan a product launch. Use the following context refresh strictly:",
@@ -111,14 +117,14 @@ export async function POST(request: Request) {
     
     console.log('Composed message length:', composedUserMessage.length)
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: model || "gpt-4o-mini",
+        model: model || "deepseek-chat",
         temperature: 0.3,
         max_tokens: 800,
         messages: [
@@ -135,7 +141,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       const text = await response.text()
       return NextResponse.json(
-        { error: "OpenAI API error", details: text },
+        { error: "DeepSeek API error", details: text },
         { status: response.status }
       )
     }

@@ -97,7 +97,7 @@ export default function FontsPage() {
               Выберите идеальный шрифт
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Каждый шрифт оптимизирован для кириллицы и следует принципам дизайна OpenAI
+              Каждый шрифт оптимизирован для кириллицы и следует современным принципам дизайна интерфейсов
             </p>
           </div>
 

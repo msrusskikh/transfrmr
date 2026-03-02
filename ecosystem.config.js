@@ -37,8 +37,8 @@ module.exports = {
       // Application URL - REQUIRED
       NEXT_PUBLIC_APP_URL: 'https://transfrmr.ru',
       
-      // OpenAI API (optional - only if using AI features)
-      OPENAI_API_KEY: '',
+      // DeepSeek API (optional - only if using AI features)
+      DEEPSEEK_API_KEY: '',
       
       // Payment API (optional - only if using payment features)
       PAYMENT_MERCHANT_ID: '',
