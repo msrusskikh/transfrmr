@@ -25,6 +25,36 @@ export async function POST(request: Request) {
 
     console.log('✅ DeepSeek API key loaded successfully')
 
+    // Support passing full chat history directly.
+    // This is required for multi-turn workflows (e.g. prompt engineering dialogues).
+    if (body.messages && Array.isArray(body.messages)) {
+      const messages = body.messages
+      const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: body.model || "deepseek-chat",
+          temperature: body.temperature || 0.7,
+          messages,
+        }),
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        return NextResponse.json(
+          { error: "DeepSeek API error", details: text },
+          { status: response.status }
+        )
+      }
+
+      const data = await response.json()
+      const response_text = data?.choices?.[0]?.message?.content || ""
+      return NextResponse.json({ response: response_text })
+    }
+
     // Handle lab prompts (new format)
     if (body.systemPrompt && body.userPrompt) {
       console.log('Processing lab prompt with system message:', body.systemPrompt.substring(0, 100) + '...')
