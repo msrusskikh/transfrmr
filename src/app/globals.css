@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Noto+Sans:wght@300;400;500;600;700&family=Ubuntu:wght@300;400;500;700&family=PT+Sans:wght@400;700&family=Fira+Sans:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -523,7 +521,7 @@
   
   /* Ensure consistent rendering across different operating systems */
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
     line-height: 1.6;
     letter-spacing: -0.011em;
     
@@ -675,7 +673,7 @@
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   /* Better rendering on macOS */
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
@@ -1020,3 +1018,23 @@ a.footer-disclaimer-text:active {
   color: hsl(var(--foreground)) !important;
   opacity: 1 !important;
 }
+
+/* Teams page footer should match section description tone */
+.teams-footer .footer-disclaimer-text,
+.teams-footer .footer-disclaimer-text span,
+.teams-footer .footer-disclaimer-text p,
+.teams-footer .footer-disclaimer-text div,
+.teams-footer a.footer-mobile-item,
+.teams-footer a.footer-mobile-item:visited,
+.teams-footer a.footer-mobile-item:hover,
+.teams-footer a.footer-mobile-item:active,
+.teams-footer a.footer-mobile-item:focus,
+.teams-footer a.footer-disclaimer-text,
+.teams-footer a.footer-disclaimer-text:visited,
+.teams-footer a.footer-disclaimer-text:hover,
+.teams-footer a.footer-disclaimer-text:active,
+.teams-footer a.footer-disclaimer-text:focus {
+  color: #5f5f59 !important;
+  opacity: 1 !important;
+}
+

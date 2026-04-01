@@ -1,8 +1,14 @@
 "use client"
 
 import Image from "next/image"
+import localFont from "next/font/local"
 import { useMemo, useState } from "react"
 import { ArrowLeft, ArrowRight, Copy } from "lucide-react"
+
+const forum = localFont({
+  src: "../../fonts/Forum-Regular.ttf",
+  display: "swap",
+})
 
 type ChatRole = "user" | "assistant"
 type ChatMessage = { role: ChatRole; content: string }
@@ -320,14 +326,17 @@ export default function PrompterPage() {
       <main className="container mx-auto px-4 py-12 md:py-16">
         <div className="mx-auto max-w-3xl">
           <div className="mb-10 text-center">
-            <p className="mb-3 text-xs uppercase tracking-[0.2em]" style={{ color: "#7a7a74" }}>
+            <p className="mb-3 text-[11px] uppercase tracking-[0.2em]" style={{ color: "#7a7a74" }}>
               transfrmr / prompter
             </p>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl" style={{ color: "#171717" }}>
-              Сильный промпт за 4 шага
+            <h2
+              className={`${forum.className} text-3xl font-normal tracking-tight md:text-[39px]`}
+              style={{ color: "#171717" }}
+            >
+              Сильный промпт за 3 шага
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm md:text-base" style={{ color: "#5f5f59" }}>
-              ИИ задаст 3 уточняющих вопроса и соберет готовый промпт, который можно сразу вставлять в LLM.
+              ИИ задаст 3 уточняющих вопроса и соберет готовый промпт, который можно сразу вставлять в LLM
             </p>
           </div>
 
