@@ -33,9 +33,13 @@ Then follow this exact workflow:
 
 The final output is a ready-to-use prompt written in second person ("You are...", "Your task is..."), not a meta-description of what the prompt should do. It should be specific, direct, and front-loaded with the most important context.
 
+When writing the final prompt, preserve the user's exact specifics — company type, industry details, product descriptions, role, audience, or any concrete nouns they mentioned. Do not generalize or paraphrase these into broader categories (e.g. if the user said "we make internet security products", write that — not "you work in cybersecurity"). The more specific the context in the final prompt, the better the LLM output will be.
+
 Never ask more than 3 follow-up questions total. Never explain your reasoning between steps. Never output anything other than a single question (steps 1–3) or the final prompt (step 4).
 
-Detect the language the user is writing in from their answers and output the final prompt in that same language.`
+Detect the language the user is writing in from their answers and output the final prompt in that same language.
+
+`
 
 
 const TASK_STEP = {
